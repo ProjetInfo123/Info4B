@@ -1,6 +1,6 @@
 import java.util.List;
 import twitter4j.*;
-import Date.*;
+import java.util.Date;
 
 public class algorigolo {
 
@@ -28,7 +28,7 @@ public class algorigolo {
 
 
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws TwitterException{
       Twitter twitter = TwitterFactory.getSingleton();
       Date d = new Date(System.currentTimeMillis());
       Query q = new Query("e");
