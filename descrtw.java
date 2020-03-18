@@ -10,24 +10,24 @@ public class descrtw {
 		HashtagEntity ht[]=tweet.getHashtagEntities();
 		UserMentionEntity ume[]=tweet.getUserMentionEntities();
 		URLEntity ue[]=tweet.getURLEntities();
-		for(int i=0;i<ht.length;i++){			
-			System.out.println("Ce tweet contient le hashtag : "+ht[i].getText());
+		for(int i=0;i<ht.length;i++){
+			System.out.println("Ce tweet contient le hashtag : #"+ht[i].getText());
 		}
-		for(int i=0;i<ume.length;i++){			
-			System.out.println("Ce tweet contient la mention d'utilisateur de @:"+ume[i].getScreenName());
+		for(int i=0;i<ume.length;i++){
+			System.out.println("Ce tweet contient la mention d'utilisateur de :@"+ume[i].getScreenName());
 		}
-		for(int i=0;i<ue.length;i++){			
+		for(int i=0;i<ue.length;i++){
 			System.out.println("Ce tweet contient les URL :"+ue[i].getURL());
-		}	
+		}
 	}
 	
-	
-	
-	
+
+
+
     public static void main(String[] args) throws TwitterException{
 	 // The factory instance is re-useable and thread safe.
     Twitter twitter = TwitterFactory.getSingleton();
-    Query query = new Query("zqserhn");
+    Query query = new Query("je souhaite a changer mon binome");
     QueryResult result = twitter.search(query);
 	descrtw d=new descrtw();
     for (Status status : result.getTweets()) {
