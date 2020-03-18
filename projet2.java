@@ -9,7 +9,7 @@ import java.util.List;
 import twitter4j.*;
 
 
-public class projet {
+public class projet2 {
     public static void main(String[] args) throws TwitterException{
 	 // The factory instance is re-useable and thread safe.
     Twitter twitter = TwitterFactory.getSingleton();
