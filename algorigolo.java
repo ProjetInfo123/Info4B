@@ -11,7 +11,7 @@ public class algorigolo {
       QueryResult qr = t.search(q);
       for(int i=0;i<ht.length;i++){
 
-
+edhdbh
 
       }
 
