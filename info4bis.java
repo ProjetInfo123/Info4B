@@ -6,7 +6,7 @@ public class info4bis {
 	 public static void main(String[] args){
 
 
-	Twitter twit = TwitterFactory.getSingleton();
+	/*Twitter twit = TwitterFactory.getSingleton();
 	twitter.setOAuthConsumer("3mvRhoAcdYBOdAqARS3XuPwwy", "xhyGCJYDBUkGVO0YG7VkfeBeKj0WYehSyr7P39zpI2FDicv0Pw");
 	twitter.setOAuthAccessToken("954367945626529798-wbMULzoFfntKnVMcEXv7e3B2IFFB3YP");
     twitter.setOAuthAccessTokenSecret("4xFQKsiYio3f05TDS4UURQLnSLKrX1F9l71E94YXyGY0O");
@@ -16,7 +16,7 @@ public class info4bis {
         System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
     }
 
-	TwitterListener listener = new TwitterAdapter() {
+TwitterListener listener = new TwitterAdapter() {
         @Override public void updatedStatus(Status status) {
           System.out.println("Successfully updated the status to [" +
                    status.getText() + "].");
@@ -34,7 +34,7 @@ public class info4bis {
     AsyncTwitterFactory factory = new AsyncTwitterFactory();
     AsyncTwitter asyncTwitter = factory.getInstance();
     asyncTwitter.addListener(listener);
-    asyncTwitter.updateStatus(args[0]);
+    asyncTwitter.updateStatus(args[0]);*/
 
-	 }
+	}
 }

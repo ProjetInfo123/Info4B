@@ -9,7 +9,7 @@ public class algorigolo {
       q.setUntil(fin);
       HashtagEntity ht[]=t.getHashtagEntities();
       QueryResult qr = t.search(q);
-      for(Status status = qr.getTweets()){
+      for(Status status : qr.getTweets()){
           for(int i=0;i<ht.length;i++){
                 if(ht[i].getText().equals(h)){
                   System.out.println("Ce tweet a été écrit par : @"+t.getUser().getScreenName());
