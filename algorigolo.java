@@ -3,7 +3,7 @@ import twitter4j.*;
 
 public class algorigolo {
 
-    void algoHash(String debut,String fin,Twitter t,String h){
+    void algoHash(String debut,String fin,Status t,String h){
       Query q = new Query("e");
       q.setSince(debut);
       q.setUntil(fin);
