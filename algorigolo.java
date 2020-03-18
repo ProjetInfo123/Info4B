@@ -4,16 +4,19 @@ import twitter4j.*;
 public class algorigolo {
 
     void algoHash(String debut,String fin,Twitter t,String h){
-      Query q = new Query();
+      Query q = new Query("e");
       q.setSince(debut);
       q.setUntil(fin);
       HashtagEntity ht[]=tweet.getHashtagEntities();
       QueryResult qr = t.search(q);
-      for(int i=0;i<ht.length;i++){
-
+      for(Status status = qr.getTweets()){
+          for(int i=0;i<ht.length;i++){
+                if(ht[i].getText().equals(h)){
+                  System.out.println("Ce tweet a été écrit par : @"+tweet.getUser().getScreenName());
+                  System.out.println("Ce tweet date du "+status.getCreatedAt());
+                }
+          }
       }
-
-
     }
 
 
