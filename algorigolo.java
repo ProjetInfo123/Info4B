@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class algorigolo {
 
-    void algoHash(String debut,String fin,String h){
+    public void algoHash(String debut,String fin,String h) throws TwitterException{
       Twitter tweet = TwitterFactory.getSingleton();
       Query q = new Query("e");
       q.setSince(debut);
@@ -30,20 +30,5 @@ public class algorigolo {
 
     public static void main(String[] args) throws TwitterException{
       Twitter twitter = TwitterFactory.getSingleton();
-      Date d = new Date(System.currentTimeMillis());
-      Query q = new Query("e");
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }
