@@ -18,6 +18,7 @@ public class algorigolo {
                   System.out.println("Ce tweet date du "+status.getCreatedAt());
                 }
           }
+          System.out.println("Il y a "+ht.length+" tweets");
       }
     }
 

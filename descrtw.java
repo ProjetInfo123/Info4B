@@ -22,6 +22,11 @@ public class descrtw {
 		}
 	}
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 04d9205da20da5cfd82ffed582363785dcde4728
 
 
 
