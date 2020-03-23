@@ -4,8 +4,9 @@ import twitter4j.*;
 
 public class descrtw {
 	public void description(Status tweet){
-		System.out.println("Ce tweet a été écrit par @"+tweet.getUser().getScreenName());
-		System.out.println("Ce tweet date du "+tweet.getCreatedAt());
+		System.out.println();
+		System.out.println("Ce tweet a été écrit par : @"+tweet.getUser().getScreenName());
+		System.out.println("Ce tweet date du : "+tweet.getCreatedAt());
 		System.out.println("Le message du tweet est : "+tweet.getText());
 		HashtagEntity ht[]=tweet.getHashtagEntities();
 		UserMentionEntity ume[]=tweet.getUserMentionEntities();
@@ -21,8 +22,11 @@ public class descrtw {
 		}
 	}
 
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> 04d9205da20da5cfd82ffed582363785dcde4728
 
 
 
