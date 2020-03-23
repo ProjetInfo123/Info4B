@@ -31,5 +31,7 @@ public class algorigolo {
 
     public static void main(String[] args) throws TwitterException{
       Twitter twitter = TwitterFactory.getSingleton();
+      algorigolo a=new algorigolo();
+      a.algoHash("2020-03-21","2020-03-22","DOOMEternal");
     }
 }

@@ -22,18 +22,13 @@ public class descrtw {
 		}
 	}
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 04d9205da20da5cfd82ffed582363785dcde4728
 
 
 
     public static void main(String[] args) throws TwitterException{
 	 // The factory instance is re-useable and thread safe.
     Twitter twitter = TwitterFactory.getSingleton();
-    Query query = new Query("je souhaite a changer mon binome");
+    Query query = new Query("peripateticienne");
     QueryResult result = twitter.search(query);
 	descrtw d=new descrtw();
     for (Status status : result.getTweets()) {
