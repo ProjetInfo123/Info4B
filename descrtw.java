@@ -14,13 +14,15 @@ public class descrtw {
 			System.out.println("Ce tweet contient le hashtag : #"+ht[i].getText());
 		}
 		for(int i=0;i<ume.length;i++){
-			System.out.println("Ce tweet contient la mention d'utilisateur de :@"+ume[i].getScreenName());
+			System.out.println("Ce tweet contient la mention d'utilisateur de : @"+ume[i].getScreenName());
 		}
 		for(int i=0;i<ue.length;i++){
-			System.out.println("Ce tweet contient les URL :"+ue[i].getURL());
+			System.out.println("Ce tweet contient les URL : "+ue[i].getURL());
 		}
 	}
-	
+
+
+
 
 
 
