@@ -9,7 +9,6 @@ public class algorigolo {
       Query q = new Query("e");
       q.setSince(debut);
       q.setUntil(fin);
-<<<<<<< HEAD
       HashtagEntity ht[]=tweet.getHashtagEntities();
       QueryResult qr = t.search(q);
       int x=0;
@@ -18,14 +17,6 @@ public class algorigolo {
                 if(ht[i].getText().equals(h)){
                   x++;
                   System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
-=======
-      QueryResult qr = tweet.search(q);
-      for(Status status : qr.getTweets()){
-        HashtagEntity ht[]=status.getHashtagEntities();
-          for(int i=0;i<ht.length;i++){
-                if(ht[i].getText().equals(h)){
-                  System.out.println("Ce tweet a été écrit par : @"+status.getUser().getScreenName());
->>>>>>> bf9b275e5f410535191aa25643a2eb2dd3a363f4
                   System.out.println("Ce tweet date du "+status.getCreatedAt());
                 }
           }
@@ -42,5 +33,7 @@ public class algorigolo {
 
     public static void main(String[] args) throws TwitterException{
       Twitter twitter = TwitterFactory.getSingleton();
+      algorigolo a=new algorigolo();
+      a.algoHash("2020-03-21","2020-03-22","DOOMEternal")
     }
 }
