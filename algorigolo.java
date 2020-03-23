@@ -12,7 +12,7 @@ public class algorigolo {
       HashtagEntity ht[]=tweet.getHashtagEntities();
       QueryResult qr = t.search(q);
       int x=0;
-      for(Status status = qr.getTweets()){
+      for(Status status : qr.getTweets()){
           for(int i=0;i<ht.length;i++){
                 if(ht[i].getText().equals(h)){
                   x++;
