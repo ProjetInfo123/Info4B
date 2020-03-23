@@ -9,16 +9,18 @@ public class algorigolo {
       Query q = new Query("e");
       q.setSince(debut);
       q.setUntil(fin);
-      QueryResult qr = tweet.search(q);
-      for(Status status : qr.getTweets()){
-        HashtagEntity ht[]=status.getHashtagEntities();
+      HashtagEntity ht[]=tweet.getHashtagEntities();
+      QueryResult qr = t.search(q);
+      int x=0;
+      for(Status status = qr.getTweets()){
           for(int i=0;i<ht.length;i++){
                 if(ht[i].getText().equals(h)){
-                  System.out.println("Ce tweet a été écrit par : @"+status.getUser().getScreenName());
+                  x++;
+                  System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
                   System.out.println("Ce tweet date du "+status.getCreatedAt());
                 }
           }
-          System.out.println("Il y a "+ht.length+" tweets");
+          System.out.println("Il y a "+x+" tweets");
       }
     }
 
