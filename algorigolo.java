@@ -5,20 +5,20 @@ import java.util.Date;
 public class algorigolo {
 
     public void algoHash(String debut,String fin,String h) throws TwitterException{
-      Twitter tweet = TwitterFactory.getSingleton();
-      Query q = new Query("e");
+      TwitterFactory tf = new TwitterFactory();   //utiliser TwitterStream, TwitterListener et FilterQuery
+      Twitter tweet = tf.getInstance();
+      Query q = new Query("doom");
       q.setSince(debut);
       q.setUntil(fin);
-      HashtagEntity ht[]=tweet.getHashtagEntities();
-      QueryResult qr = t.search(q);
+      QueryResult qr = tweet.search(q);
       int x=0;
       for(Status status : qr.getTweets()){
+        HashtagEntity ht[]=status.getHashtagEntities();
+        x++;
           for(int i=0;i<ht.length;i++){
-                if(ht[i].getText().equals(h)){
-                  x++;
                   System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
                   System.out.println("Ce tweet date du "+status.getCreatedAt());
-                }
+
           }
           System.out.println("Il y a "+x+" tweets");
       }

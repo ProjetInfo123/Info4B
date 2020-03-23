@@ -23,14 +23,37 @@ public class descrtw {
 	}
 
 
+	public class Indexation extends Thread {//ajouter des hashtables
+		public ArrayList<Status> fa;
+
+		public Indexation(ArrayList<Status> fa){
+								this.fa=fa;
+		}
+
+		public void run(){
+				while(fa.size()>0){
+					
+
+
+
+				}
+
+
+
+		}
+
+	}
+
+
 
 
     public static void main(String[] args) throws TwitterException{
 	 // The factory instance is re-useable and thread safe.
+	  ArrayList<Status> fa=new ArrayList();
     Twitter twitter = TwitterFactory.getSingleton();
-    Query query = new Query("je souhaite a changer mon binome");
+    Query query = new Query("je souhaite a changer de binome");
     QueryResult result = twitter.search(query);
-	descrtw d=new descrtw();
+		descrtw d=new descrtw();
     for (Status status : result.getTweets()) {
         d.description(status);
     }
