@@ -36,6 +36,31 @@ public class DescrTweets {
 		this.url=tweet.getURLEntities();
 	}
 
+public class Stockage<T> {
+	private HashTable
+
+	public static void ecrire(){
+
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
 
 	public class Indexation extends Thread {//ajouter des hashtables
 		private LinkedList<Status> fa;
