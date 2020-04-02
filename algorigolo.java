@@ -1,32 +1,49 @@
 import java.util.*;
 import twitter4j.*;
-import org.json.JSONArray;
+/*import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import java.io.FileWriter;
-import java.io.IOException;
+import org.json.JSONObject;*/
+import java.io.*;
 
-public class algorigolo {
-    LinkedList l = new LinkedList<Status>;
+public class algorigolo{
+    List<Status> st = new ArrayList<Status>();
     public void algoHash(String debut,String fin,String h) throws TwitterException{
       TwitterFactory tf = new TwitterFactory();   //utiliser TwitterStream, TwitterListener et FilterQuery
       Twitter tweet = tf.getInstance();
-      Query q = new Query("changer binome");
+      Query q = new Query(h);
+      int nbt=201;
+      long lastID = Long.MAX_VALUE;
       q.setSince(debut);
       q.setUntil(fin);
       q.setCount(100);
       QueryResult qr = tweet.search(q);
-      for(Status status : qr.getTweets()){
+      while (st.size () < nbt) {
+          if (nbt - st.size() > 100)
+            q.setCount(100);
+          else
+            q.setCount(nbt - st.size());
+        try {
+            QueryResult result = tweet.search(q);
+              st.addAll(result.getTweets());
+                System.out.println("Gathered " + st.size() + " tweets");
+                for (Status t: st)
+                  if(t.getId() < lastID) lastID = t.getId();
 
-        HashtagEntity ht[]=status.getHashtagEntities();
-          for(int i=0;i<ht.length;i++){
-                  System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
-                  System.out.println("Ce tweet date du "+status.getCreatedAt());
+            }catch (TwitterException te) {
+      System.out.println("Couldn't connect: " + te);
+    };
+    q.setMaxId(lastID-1);
+  }
+    for (int i = 0; i < st.size(); i++) {
+      Status status = (Status)st.get(i);
 
-          }
-      }
+                  System.out.println(i + " USER: " + status.getUser() + " wrote: " + status.getText());
+
+
+                }
     }
-  public void stockage(LinkedList<Status> st,String file){
+  public void stockage(ArrayList<Status> st,String file){
+
     FileInputStream fs = null;  //ouverture file
       try {
           fs = new FileInputStream(file);
@@ -36,7 +53,7 @@ public class algorigolo {
       }
       FileOutputStream fo = null;
         try{                                                    //écriture de st dans le file
-          FileOutputStream fo = new FileOutputStream(file);
+          fo = new FileOutputStream(file);
           ObjectOutputStream out = new ObjectOutputStream(fo);
           out.writeObject(st);
         }
@@ -48,10 +65,57 @@ public class algorigolo {
 
       }
 
+      public void testTweet(String term){
+        {
+          TwitterFactory tf = new TwitterFactory();   //utiliser TwitterStream, TwitterListener et FilterQuery
+          Twitter tweet = tf.getInstance();
+          int wantedTweets = 214;
+          long firstQueryID =0;
+          long lastSearchID = Long.MAX_VALUE;
+          int remainingTweets = wantedTweets;
+          Query query = new Query(term);
+          try
+            {
+
+                while(remainingTweets > 0)
+                {
+                    remainingTweets = wantedTweets - st.size();
+                    if(remainingTweets > 100)
+                    {
+                      query.count(100);
+                    }
+                    else
+                    {
+                      query.count(remainingTweets);
+                    }
+            QueryResult result = tweet.search(query);
+            st.addAll(result.getTweets());
+            Status ds = st.get(st.size()-1);
+            for (int i = 0; i < st.size(); i++) {
+               ds = st.get(st.size()-1);
+
+                          System.out.println(i + " User: " + ds.getUser().getScreenName());
+            }
+            firstQueryID = ds.getId();
+            query.setMaxId(firstQueryID-1);
+            remainingTweets = wantedTweets - st.size();
+          }
+          System.out.println("tweets.size() "+st.size() );
+        }
+        catch(TwitterException te)
+        {
+          System.out.println("Failed to search tweets: " + te.getMessage());
+          System.exit(-1);
+        }
+}
+
+}
 
 
 
-    }
+
+
+
 
 
 
@@ -61,13 +125,14 @@ public class algorigolo {
     public static void main(String[] args) throws TwitterException{
       Twitter twitter = TwitterFactory.getSingleton();
       algorigolo a=new algorigolo();
-      a.algoHash("2020-03-21","2020-03-22","");
+      //a.algoHash("2020-03-21","2020-03-22","mort");
+      a.testTweet("mort");
 
 
 
 
 }
-
+}
 
 
 

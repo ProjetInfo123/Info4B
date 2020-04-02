@@ -1,5 +1,6 @@
 import java.util.*;
 import twitter4j.*;
+import java.io.*;
 
 
 public class DescrTweets {
@@ -36,25 +37,7 @@ public class DescrTweets {
 		this.url=tweet.getURLEntities();
 	}
 
-public class Stockage<T> {
-	private HashTable
 
-	public static void ecrire(){
-
-
-
-	}
-
-
-
-
-
-
-
-
-
-
-}
 
 
 
@@ -95,12 +78,20 @@ public class Stockage<T> {
 	  LinkedList<Status> fa=new LinkedList<>();
     Twitter twitter = TwitterFactory.getSingleton();
     Query query = new Query("je binome");
+		query.setCount(100);
     QueryResult result = twitter.search(query);
 		DescrTweets d;
-    for (Status status : result.getTweets()) {
+		Stockage s=new Stockage();
+		for (Status status : result.getTweets()){
+			s.ajoutTweet(status);
+		}
+		System.out.println(s.stock.toString());
+
+
+    /*for (Status status : result.getTweets()) {
         d=new DescrTweets(status);
 				fa.addLast(status);
-    }
-		System.out.println(fa.size());
+    }*/
+		System.out.println("La taille est de "+fa.size());
     }
 }
