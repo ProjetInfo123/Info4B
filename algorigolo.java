@@ -6,7 +6,7 @@ import org.json.JSONObject;*/
 import java.io.*;
 
 public class algorigolo{
-    List<Status> st = new ArrayList<Status>();
+    ArrayList<Status> st = new ArrayList<Status>();
     public void algoHash(String debut,String fin,String h) throws TwitterException{
       TwitterFactory tf = new TwitterFactory();   //utiliser TwitterStream, TwitterListener et FilterQuery
       Twitter tweet = tf.getInstance();
@@ -42,15 +42,8 @@ public class algorigolo{
 
                 }
     }
-  public void stockage(ArrayList<Status> st,String file){
+  public void ecrire(ArrayList<Status> st,String file){
 
-    FileInputStream fs = null;  //ouverture file
-      try {
-          fs = new FileInputStream(file);
-      } catch(FileNotFoundException e) {
-          System.err.println("Fichier '" + file+ "' introuvable");
-          System.exit(-1);
-      }
       FileOutputStream fo = null;
         try{                                                    //écriture de st dans le file
           fo = new FileOutputStream(file);
@@ -65,51 +58,48 @@ public class algorigolo{
 
       }
 
-      public void testTweet(String term){
-        {
-          TwitterFactory tf = new TwitterFactory();   //utiliser TwitterStream, TwitterListener et FilterQuery
-          Twitter tweet = tf.getInstance();
-          int wantedTweets = 214;
-          long firstQueryID =0;
-          long lastSearchID = Long.MAX_VALUE;
-          int remainingTweets = wantedTweets;
-          Query query = new Query(term);
-          try
-            {
+  ArrayList<Status> testTweet2(String term){
 
-                while(remainingTweets > 0)
-                {
-                    remainingTweets = wantedTweets - st.size();
-                    if(remainingTweets > 100)
-                    {
-                      query.count(100);
-                    }
-                    else
-                    {
-                      query.count(remainingTweets);
-                    }
-            QueryResult result = tweet.search(query);
-            st.addAll(result.getTweets());
-            Status ds = st.get(st.size()-1);
-            for (int i = 0; i < st.size(); i++) {
-               ds = st.get(st.size()-1);
+Twitter twitter = new TwitterFactory().getInstance();
+Query query = new Query(term);
+int numberOfTweets = 200;
+long lastID = Long.MAX_VALUE;
+ArrayList<Status> tweets = new ArrayList<Status>();
+while (tweets.size () < numberOfTweets) {
+  if (numberOfTweets - tweets.size() > 100)
+    query.setCount(100);
+  else
+    query.setCount(numberOfTweets - tweets.size());
+  try {
+    QueryResult result = twitter.search(query);
+    tweets.addAll(result.getTweets());
+    System.out.println("Gathered " + tweets.size() + " tweets");
+    for (Status t: tweets)
+      if(t.getId() < lastID) lastID = t.getId();
 
-                          System.out.println(i + " User: " + ds.getUser().getScreenName());
-            }
-            firstQueryID = ds.getId();
-            query.setMaxId(firstQueryID-1);
-            remainingTweets = wantedTweets - st.size();
-          }
-          System.out.println("tweets.size() "+st.size() );
-        }
-        catch(TwitterException te)
-        {
-          System.out.println("Failed to search tweets: " + te.getMessage());
-          System.exit(-1);
-        }
+  }
+
+  catch (TwitterException te) {
+    System.out.println("Couldn't connect: " + te);
+  };
+  query.setMaxId(lastID-1);
 }
 
+for (int i = 0; i < tweets.size(); i++) {
+  Status t = (Status) tweets.get(i);
+  String user = t.getUser().getScreenName();
+  String msg = t.getText();
+  String time = "";
+    System.out.println(i + " USER: " + user + " wrote: " + msg);
 }
+return tweets;
+}
+
+
+
+
+
+
 
 
 
@@ -126,7 +116,8 @@ public class algorigolo{
       Twitter twitter = TwitterFactory.getSingleton();
       algorigolo a=new algorigolo();
       //a.algoHash("2020-03-21","2020-03-22","mort");
-      a.testTweet("mort");
+      //a.testTweet2("hardy");
+      a.ecrire(a.testTweet2("hardy"),"test.ser");
 
 
 

@@ -2,7 +2,6 @@ import java.util.*;
 import twitter4j.*;
 import java.io.*;
 
-
 public class DescrTweets {
 	private User utilisateur;
 	private Date date;
@@ -73,6 +72,8 @@ public class DescrTweets {
 
 
 
+
+
     public static void main(String[] args) throws TwitterException{
 	 // The factory instance is re-useable and thread safe.
 	  LinkedList<Status> fa=new LinkedList<>();
@@ -80,18 +81,24 @@ public class DescrTweets {
     Query query = new Query("je binome");
 		query.setCount(100);
     QueryResult result = twitter.search(query);
-		DescrTweets d;
+		//DescrTweets d;
 		Stockage s=new Stockage();
+
+		for (Status status : result.getTweets()) {
+				//d=new DescrTweets(status);
+				fa.addLast(status);
+		}
+
+		System.out.println("La taille est de "+fa.size());
+
 		for (Status status : result.getTweets()){
 			s.ajoutTweet(status);
 		}
-		System.out.println(s.stock.toString());
+		for (Status status : result.getTweets()){
+			System.out.println(s.getTweet(status).toString());
+		}
 
 
-    /*for (Status status : result.getTweets()) {
-        d=new DescrTweets(status);
-				fa.addLast(status);
-    }*/
-		System.out.println("La taille est de "+fa.size());
+
     }
 }
