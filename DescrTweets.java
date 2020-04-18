@@ -2,6 +2,8 @@ import java.util.*;
 import twitter4j.*;
 import java.io.*;
 
+
+
 public class DescrTweets {
 	private User utilisateur;
 	private Date date;
@@ -41,9 +43,6 @@ public class DescrTweets {
 
 
 
-
-
-
 	public class Indexation extends Thread {//ajouter des hashtables
 		private LinkedList<Status> fa;
 		private DescrTweets d;
@@ -71,9 +70,6 @@ public class DescrTweets {
 
 
 
-
-
-
     public static void main(String[] args) throws TwitterException{
 	 // The factory instance is re-useable and thread safe.
 	  LinkedList<Status> fa=new LinkedList<>();
@@ -81,24 +77,70 @@ public class DescrTweets {
     Query query = new Query("je binome");
 		query.setCount(100);
     QueryResult result = twitter.search(query);
-		//DescrTweets d;
-		Stockage s=new Stockage();
+		DescrTweets o;
+		Stockage<User> u=new Stockage();
+		Stockage<Date> d=new Stockage();
+		Stockage<String> c=new Stockage();
+		Stockage<HashtagEntity[]> h=new Stockage();
+		Stockage<UserMentionEntity[]> m=new Stockage();
+		Stockage<URLEntity[]> l=new Stockage();
 
 		for (Status status : result.getTweets()) {
-				//d=new DescrTweets(status);
+				//o=new DescrTweets(status);
 				fa.addLast(status);
 		}
 
 		System.out.println("La taille est de "+fa.size());
 
 		for (Status status : result.getTweets()){
-			s.ajoutTweet(status);
+			u.ajoutTweet(status.getUser(),status);
+			d.ajoutTweet(status.getCreatedAt(),status);
+			c.ajoutTweet(status.getText(),status);
+			h.ajoutTweet(status.getHashtagEntities(),status);
+			m.ajoutTweet(status.getUserMentionEntities(),status);
+			l.ajoutTweet(status.getURLEntities(),status);
 		}
-		for (Status status : result.getTweets()){
-			System.out.println(s.getTweet(status).toString());
-		}
+
+		/*for (Status status : result.getTweets()){
+			o=new DescrTweets(s.getTweet(status));
+		}*/
+
+		System.out.println(u.size());
+		System.out.println(d.size());
+		System.out.println(c.size());
+		System.out.println(h.size());
+		System.out.println(m.size());
+		System.out.println(l.size());
 
 
 
     }
-}
+
+	}
+
+	class Stockage<Type> {//franchement bien réfléchir à comment ranger selon le type avec plusieurs tweets
+		public Hashtable<Type,Status> tweets;
+
+		public Stockage(){
+			this.tweets=new Hashtable<Type,Status>();
+		}
+
+		public void ajoutTweet(Type type,Status t){
+				this.tweets.put(type,t);
+		}
+
+		/*public Status getTweet(Status t){
+			if(this.tweets.containsKey(u)){
+				return this.tweets.get(u).get(d);
+			}
+			else{
+					return null;
+			}
+		}*/
+
+		public int size(){
+			return this.tweets.size();
+		}
+
+
+	}
