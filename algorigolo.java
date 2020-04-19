@@ -182,3 +182,13 @@ public static void main(String[] args) {
 
 }
 }*/
+
+
+
+
+public void classerUser(ArrayList<Status> tweets){   //voir UserList , User etc... dans la javadoc
+
+
+
+
+}

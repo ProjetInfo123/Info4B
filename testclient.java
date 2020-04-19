@@ -46,28 +46,58 @@ public class testclient{
   }
 }
 
+ArrayList<Status> testTweet2(String term){
 
+Twitter twitter = new TwitterFactory().getInstance();
+Query query = new Query(term);
+int numberOfTweets = 200;
+long lastID = Long.MAX_VALUE;
+ArrayList<Status> tweets = new ArrayList<Status>();
+while (tweets.size () < numberOfTweets) {
+if (numberOfTweets - tweets.size() > 100)
+  query.setCount(100);
+else
+  query.setCount(numberOfTweets - tweets.size());
+try {
+  QueryResult result = twitter.search(query);
+  tweets.addAll(result.getTweets());
+  System.out.println("Gathered " + tweets.size() + " tweets");
+  for (Status t: tweets)
+    if(t.getId() < lastID) lastID = t.getId();
+
+}
+
+catch (TwitterException te) {
+  System.out.println("Couldn't connect: " + te);
+};
+query.setMaxId(lastID-1);
+}
+
+for (int i = 0; i < tweets.size(); i++) {
+Status t = (Status) tweets.get(i);
+String user = t.getUser().getScreenName();
+String msg = t.getText();
+String time = "";
+  System.out.println(i + " USER: " + user + " wrote: " + msg);
+}
+return tweets;
+}
 
 
 
  class EssaiClient extends Thread{
-  private algorigolo a;
   private ArrayList<Status> tweets;
   private PrintWriter pw;
 
-  public EssaiClient(algorigolo a,PrintWriter pw){
-     this.a=a;
-     this.tweets=a.testTweet2("bts");
+  public EssaiClient(PrintWriter pw){
+     this.tweets=testclient.testTweet2("bts");
      this.pw=pw;
   }
 
   public void run(){
-
-    /*try{
       for(int i=0;i<tweets.size();i++){
         pw.println(tweets.get(i).getText());
       }
-    }catch(IOException e){e.printStackTrace();}*/
     testclient.arreter=true;
   }
 

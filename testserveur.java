@@ -22,7 +22,12 @@ public class testserveur{
 	}
    }
 
+
+
  }
+
+
+
 
 
 class ConnexionClient extends Thread{
@@ -53,7 +58,7 @@ class ConnexionClient extends Thread{
      while (true) {
            String str = sisr.readLine();          		// lecture du message
            if (str.equals("END")) break;
-           System.out.println("recu de "+id+","+pseudo+"=> " + str);   	// trace locale
+           System.out.println("recu de "+id+","+pseudo+"=>" + str);   	// trace locale
            // on envoi a tous
            for(int i=0; i<testserveur.numClient; i++){
              if (testserveur.pw[i]!=null && i!=id)
