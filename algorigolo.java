@@ -123,7 +123,7 @@ return tweets;
 
 
 }
-}
+
 
 
 
@@ -184,11 +184,23 @@ public static void main(String[] args) {
 }*/
 
 
+public void swapUser(ArrayList<User> q,int i,int j){
+  User u=q.get(i);;User w=q.get(j);
+  q.set(i,w); q.set(j,u);
+}
 
 
-public void classerUser(ArrayList<Status> tweets){   //voir UserList , User etc... dans la javadoc
+
+
+public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans une arraylist et ajouter un compteur
+      ArrayList<String> couple = new ArrayList<String>();
 
 
 
+      }
+
+
+
+}
 
 }

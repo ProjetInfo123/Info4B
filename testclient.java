@@ -28,8 +28,7 @@ public class testclient{
                                new OutputStreamWriter(socket.getOutputStream())),true);
 
 
-       algorigolo a=new algorigolo();
-       EssaiClient saisie=new EssaiClient(a,sisw);
+       EssaiClient saisie=new EssaiClient(sisw);
        saisie.start();
 
        String str;
@@ -44,7 +43,7 @@ public class testclient{
        sisw.close();
        socket.close();
   }
-}
+
 
 ArrayList<Status> testTweet2(String term){
 
@@ -83,6 +82,8 @@ String time = "";
 return tweets;
 }
 
+}
+
 
 
  class EssaiClient extends Thread{
@@ -90,7 +91,7 @@ return tweets;
   private PrintWriter pw;
 
   public EssaiClient(PrintWriter pw){
-     this.tweets=testclient.testTweet2("bts");
+     //this.tweets=testclient.testTweet2("bts");
      this.pw=pw;
   }
 

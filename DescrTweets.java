@@ -114,23 +114,15 @@ public class DescrTweets {
 			o=new DescrTweets(s.getTweet(status));
 		}*/
 
-		System.out.println(u.size());
-		System.out.println(d.size());
-		System.out.println(c.size());
-		System.out.println(h.size());
-		System.out.println(m.size());
-		System.out.println(l.size());
 
-		ArrayList<User> lu=new ArrayList(u.cles());
-		Set su=u.cles();
-		for(int i=0;i<lu.size();i++){
-			//System.out.println(lu.get(i)+" sa taille est ");
-			System.out.println();
-		}
-		System.out.println(lu.size());
-		System.out.println("La taille est de "+fa.size());
+		System.out.println(u.toString());
+		System.out.println(d.toString());
+		System.out.println(c.toString());
+		System.out.println(h.toString());
+		System.out.println(m.toString());
+		System.out.println(l.toString());
 
-		System.out.println(u);
+
 
 
     }
@@ -138,14 +130,23 @@ public class DescrTweets {
 	}
 
 	class Stockage {//franchement bien réfléchir à comment ranger selon le type avec plusieurs tweets
-		public Hashtable<String,Status> tweets;
+		public Hashtable<String,ArrayList<Status>> tweets;
 
 		public Stockage(){
-			this.tweets=new Hashtable<String,Status>();
+			this.tweets=new Hashtable<String,ArrayList<Status>>();
 		}
 
 		public void ajoutTweet(String s,Status t){
-				this.tweets.put(s,t);
+			if(this.tweets.containsKey(s)){
+				ArrayList<Status> a=this.tweets.get(s);
+				a.add(t);
+				this.tweets.put(s,a);
+			}
+			else{
+				ArrayList<Status> a=new ArrayList<>();
+				a.add(t);
+				this.tweets.put(s,a);
+			}
 		}
 
 		/*public Status getTweet(Status t){
@@ -157,7 +158,7 @@ public class DescrTweets {
 			}
 		}*/
 
-		public int size(){
+		/*public int size(){
 			return this.tweets.size();
 		}
 
@@ -165,12 +166,26 @@ public class DescrTweets {
 			return this.tweets.values();
 		}
 
-		public Set<String> cles(){
+		public Set cles(){
 			return this.tweets.keySet();
-		}
+		}*/
 
 		public String toString(){
-			return this.tweets.toString();
+			String s="";
+
+			Set ec=this.tweets.keySet();
+			ArrayList<String> c=new ArrayList(ec);
+
+			s+="Cette HashTable contient "+c.size()+" éléments.";
+			s+="\n";
+
+			for(int i=0;i<c.size();i++){
+				ArrayList<Status> a=this.tweets.get(c.get(i));
+				s+=c.get(i)+" contient "+a.size()+" éléments.";
+				s+="\n";
+			}
+
+			return s;
 		}
 
 
