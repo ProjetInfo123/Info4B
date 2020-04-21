@@ -1,8 +1,5 @@
 import java.util.*;
 import twitter4j.*;
-/*import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;*/
 import java.io.*;
 
 public class algorigolo{
@@ -130,6 +127,7 @@ return tweets;
 
 
 
+
 /*
 public class CreerJSON {
 
@@ -192,15 +190,34 @@ public void swapUser(ArrayList<User> q,int i,int j){
 
 
 
-public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans une arraylist et ajouter un compteur
-      ArrayList<String> couple = new ArrayList<String>();
+public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans une arraylist et ajouter un compteurtw
+      Hashtable<String,ArrayList<Status>> htt =new Hashtable<String,ArrayList<Status>>(); //htt ??
+      Hashtable<String,ArrayList<Status>> fin =new Hashtable<String,ArrayList<Status>>(); //fin est une hashtable rempli des couples
+      ArrayList<HashtagEntity> hash;
+      HashtagEntity ht[];
 
-
-
+    for(int i=0;i<tweets.size();i++){
+      ht=tweets.get(i).getHashtagEntities();
+      for(int j=0;j<ht.length;j++){
+        hash.add(ht[j]);
       }
 
+    }
 
 
-}
+    }
 
-}
+      public void ajoutTweet(String s,Status t,Hashtable<String,ArrayList<Status>> htt,Hashtable<String,ArrayList<Status>> fin){
+        if(htt.containsKey(s)){
+          ArrayList<Status> a=htt.get(s);
+          a.add(t);
+          htt.put(s,a);
+        }
+        else{
+          ArrayList<Status> a=new ArrayList<>();
+          a.add(t);
+          htt.put(s,a);
+        }
+      }
+
+    }

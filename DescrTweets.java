@@ -45,28 +45,39 @@ public class DescrTweets {
 
 	public class Indexation extends Thread {//ajouter des hashtables
 		private LinkedList<Status> fa;
-		private DescrTweets d;
+		private static Stockage utilisateurs,date,message,hashtags,mentions,url;
 
-		public Indexation(LinkedList<Status> fa,DescrTweets d){
-								this.fa=fa;
-								this.d=d;
+		public Indexation(LinkedList<Status> fa){
+			this.fa=fa;
+			this.utilisateur=new Stockage();
+			this.date=new Stockage();
+			this.message=new Stockage();
+			this.hashtags=new Stockage();
+			this.mentions=new Stockage();
+			this.url=new Stockage();
 		}
 
 		public void run(){
 				while(fa.size()>0){
-					Status tweet=fa.removeFirst();
-
-
-
-
-
+					Status status=fa.removeFirst();
+					this.utilisateurs.ajoutTweet("@"+status.getUser().getScreenName(),status);
+					this.date.ajoutTweet(status.getCreatedAt().toString(),status);
+					this.message.ajoutTweet(status.getText(),status);
+					HashtagEntity ht[]=status.getHashtagEntities();
+					UserMentionEntity ume[]=status.getUserMentionEntities();
+					URLEntity ue[]=status.getURLEntities();
+					for(int i=0;i<ht.length;i++){
+						this.hashtags.ajoutTweet("#"+ht[i].getText(),status);
+					}
+					for(int i=0;i<ume.length;i++){
+						this.mentions.ajoutTweet("@"+ume[i].getScreenName(),status);
+					}
+					for(int i=0;i<ue.length;i++){
+						this.url.ajoutTweet(ue[i].getURL(),status);
+					}
 				}
-
-
-
+			}
 		}
-
-	}
 
 
 
@@ -149,14 +160,20 @@ public class DescrTweets {
 			}
 		}
 
-		/*public Status getTweet(Status t){
-			if(this.tweets.containsKey(u)){
-				return this.tweets.get(u).get(d);
-			}
-			else{
+		public Status getTweet(String s,Status t){
+			if(this.tweets.containsKey(s)){
+				ArrayList<Status> a=this.tweets.get(s);
+				for(int i=0;i<a.size();i++){
+					if(a.get(i).equals(t)){
+						return a.get(i);
+					}
+				}
+				return null;
+				}
+				else{
 					return null;
-			}
-		}*/
+				}
+		}
 
 		/*public int size(){
 			return this.tweets.size();
