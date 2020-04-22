@@ -192,32 +192,48 @@ public void swapUser(ArrayList<User> q,int i,int j){
 
 public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans une arraylist et ajouter un compteurtw
       Hashtable<String,ArrayList<Status>> htt =new Hashtable<String,ArrayList<Status>>(); //htt ??
-      Hashtable<String,ArrayList<Status>> fin =new Hashtable<String,ArrayList<Status>>(); //fin est une hashtable rempli des couples
-      ArrayList<HashtagEntity> hash;
+      ArrayList<String> fin = new ArrayList<String>();
+      ArrayList<int> comptefin = new ArrayList<int>();
+      ArrayList<String> hash=new ArrayList<String>();
       HashtagEntity ht[];
 
     for(int i=0;i<tweets.size();i++){
       ht=tweets.get(i).getHashtagEntities();
+    }
+
+    for(int i=0;i<ht.length;i++){
+      for(int j=i+1;j<ht.length;j++){
+          fin.add(ht[i].getText()+" "+ht[j].getText());
+      }
+      for(int i=0;i<fin.size();i++){
+        comptefin.add(1);
+      }
+
+    }
+
+    for(int i=0;i<tweets.size();i++){
+      ht=tweets.get(i).getHashtagEntities();
       for(int j=0;j<ht.length;j++){
-        hash.add(ht[j]);
+        for(int k=j+1;k<ht.length;k++){
+            hash.add(ht[j].getText()+" "+ht[k].getText());
+        }
       }
+
+        for(int l=0;l<hash.size();l++){
+          for(int m=0;m<fin.size();m++){
+            if(hash.get(l).equals(fin.get(m)))){
+              comptefin.set(m,comptefin.get(m)++);
+            }
+          }
+        }
+
 
     }
 
 
-    }
 
-      public void ajoutTweet(String s,Status t,Hashtable<String,ArrayList<Status>> htt,Hashtable<String,ArrayList<Status>> fin){
-        if(htt.containsKey(s)){
-          ArrayList<Status> a=htt.get(s);
-          a.add(t);
-          htt.put(s,a);
-        }
-        else{
-          ArrayList<Status> a=new ArrayList<>();
-          a.add(t);
-          htt.put(s,a);
-        }
-      }
+
+
+
 
     }

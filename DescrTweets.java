@@ -5,7 +5,7 @@ import java.io.*;
 
 
 public class DescrTweets {
-	private User utilisateur;
+	/*private User utilisateur;
 	private Date date;
 	private String message;
 	private HashtagEntity hashtags[];
@@ -36,48 +36,51 @@ public class DescrTweets {
 		this.hashtags=tweet.getHashtagEntities();
 		this.mentions=tweet.getUserMentionEntities();
 		this.url=tweet.getURLEntities();
+	}*/
+
+	private Stockage utilisateurs,date,message,hashtags,mentions,url;
+
+	public DescrTweets(){
+		this.utilisateurs=new Stockage();
+		this.date=new Stockage();
+		this.message=new Stockage();
+		this.hashtags=new Stockage();
+		this.mentions=new Stockage();
+		this.url=new Stockage();
+	}
+
+	public void remplirHashtables(Status status){
+		this.utilisateurs.ajoutTweet("@"+status.getUser().getScreenName(),status);
+		this.date.ajoutTweet(status.getCreatedAt().toString(),status);
+		this.message.ajoutTweet(status.getText(),status);
+		HashtagEntity ht[]=status.getHashtagEntities();
+		UserMentionEntity ume[]=status.getUserMentionEntities();
+		URLEntity ue[]=status.getURLEntities();
+		for(int i=0;i<ht.length;i++){
+			this.hashtags.ajoutTweet("#"+ht[i].getText(),status);
+		}
+		for(int i=0;i<ume.length;i++){
+			this.mentions.ajoutTweet("@"+ume[i].getScreenName(),status);
+		}
+		for(int i=0;i<ue.length;i++){
+			this.url.ajoutTweet(ue[i].getURL(),status);
+		}
+
+	}
+
+	public void afficher(){
+		System.out.println(this.utilisateurs.toString());
+		System.out.println(this.date.toString());
+		System.out.println(this.message.toString());
+		System.out.println(this.hashtags.toString());
+		System.out.println(this.mentions.toString());
+		System.out.println(this.url.toString());
 	}
 
 
 
 
 
-
-	public class Indexation extends Thread {//ajouter des hashtables
-		private LinkedList<Status> fa;
-		private static Stockage utilisateurs,date,message,hashtags,mentions,url;
-
-		public Indexation(LinkedList<Status> fa){
-			this.fa=fa;
-			this.utilisateur=new Stockage();
-			this.date=new Stockage();
-			this.message=new Stockage();
-			this.hashtags=new Stockage();
-			this.mentions=new Stockage();
-			this.url=new Stockage();
-		}
-
-		public void run(){
-				while(fa.size()>0){
-					Status status=fa.removeFirst();
-					this.utilisateurs.ajoutTweet("@"+status.getUser().getScreenName(),status);
-					this.date.ajoutTweet(status.getCreatedAt().toString(),status);
-					this.message.ajoutTweet(status.getText(),status);
-					HashtagEntity ht[]=status.getHashtagEntities();
-					UserMentionEntity ume[]=status.getUserMentionEntities();
-					URLEntity ue[]=status.getURLEntities();
-					for(int i=0;i<ht.length;i++){
-						this.hashtags.ajoutTweet("#"+ht[i].getText(),status);
-					}
-					for(int i=0;i<ume.length;i++){
-						this.mentions.ajoutTweet("@"+ume[i].getScreenName(),status);
-					}
-					for(int i=0;i<ue.length;i++){
-						this.url.ajoutTweet(ue[i].getURL(),status);
-					}
-				}
-			}
-		}
 
 
 
@@ -88,13 +91,7 @@ public class DescrTweets {
     Query query = new Query("je binome");
 		query.setCount(100);
     QueryResult result = twitter.search(query);
-		DescrTweets o;
-		Stockage u=new Stockage();
-		Stockage d=new Stockage();
-		Stockage c=new Stockage();
-		Stockage h=new Stockage();
-		Stockage m=new Stockage();
-		Stockage l=new Stockage();
+		DescrTweets o=new DescrTweets();
 
 		for (Status status : result.getTweets()) {
 				//o=new DescrTweets(status);
@@ -103,36 +100,18 @@ public class DescrTweets {
 
 		System.out.println("La taille est de "+fa.size());
 
-		for (Status status : result.getTweets()){
-			u.ajoutTweet("@"+status.getUser().getScreenName(),status);
-			d.ajoutTweet(status.getCreatedAt().toString(),status);
-			c.ajoutTweet(status.getText(),status);
-			HashtagEntity ht[]=status.getHashtagEntities();
-			UserMentionEntity ume[]=status.getUserMentionEntities();
-			URLEntity ue[]=status.getURLEntities();
-			for(int i=0;i<ht.length;i++){
-				h.ajoutTweet("#"+ht[i].getText(),status);
-			}
-			for(int i=0;i<ume.length;i++){
-				m.ajoutTweet("@"+ume[i].getScreenName(),status);
-			}
-			for(int i=0;i<ue.length;i++){
-				l.ajoutTweet(ue[i].getURL(),status);
-			}
-		}
 
 		/*for (Status status : result.getTweets()){
 			o=new DescrTweets(s.getTweet(status));
 		}*/
 
 
-		System.out.println(u.toString());
-		System.out.println(d.toString());
-		System.out.println(c.toString());
-		System.out.println(h.toString());
-		System.out.println(m.toString());
-		System.out.println(l.toString());
-
+		Indexation i=new Indexation(fa,o);
+		i.start();
+		while(!i.isArret()){
+			System.out.println("C'est en cours.");
+		}
+		o.afficher();
 
 
 
@@ -146,6 +125,28 @@ public class DescrTweets {
 		public Stockage(){
 			this.tweets=new Hashtable<String,ArrayList<Status>>();
 		}
+
+		public Stockage(String file) {
+	    try {
+				FileInputStream fileIn = new FileInputStream(file);
+				ObjectInputStream in = new ObjectInputStream(fileIn);
+				this.tweets = (Hashtable<String,ArrayList<Status>>)in.readObject();
+			}
+			catch (Exception e) {
+				System.out.println(e);
+			}
+	  }
+
+		public void write(String file) {
+	    try {
+				FileOutputStream fileOut = new FileOutputStream(file);
+				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				out.writeObject(this.tweets);
+			}
+			catch (Exception e) {
+				System.out.println(e);
+			}
+	  }
 
 		public void ajoutTweet(String s,Status t){
 			if(this.tweets.containsKey(s)){
@@ -206,4 +207,29 @@ public class DescrTweets {
 		}
 
 
+
+
 	}
+
+ class Indexation extends Thread {//ajouter des hashtables
+		private LinkedList<Status> fa;
+		private DescrTweets d;
+		private boolean arret=false;
+
+		public Indexation(LinkedList<Status> fa,DescrTweets d){
+			this.fa=fa;
+			this.d=d;
+		}
+
+		public boolean isArret(){
+			return this.arret;
+		}
+
+		public void run(){
+				while(fa.size()>0){
+					Status tweet=fa.removeFirst();
+					this.d.remplirHashtables(tweet);
+				}
+				this.arret=true;
+			}
+		}
