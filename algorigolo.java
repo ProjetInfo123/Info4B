@@ -59,7 +59,7 @@ public class algorigolo{
 
 Twitter twitter = new TwitterFactory().getInstance();
 Query query = new Query(term);
-int numberOfTweets = 200;
+int numberOfTweets = 1000;
 long lastID = Long.MAX_VALUE;
 ArrayList<Status> tweets = new ArrayList<Status>();
 while (tweets.size () < numberOfTweets) {
@@ -101,8 +101,56 @@ return tweets;
 
 
 
+public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans une arraylist et ajouter un compteurtw
+      Hashtable<String,ArrayList<Status>> htt =new Hashtable<String,ArrayList<Status>>(); //htt ??
+      ArrayList<String> fin = new ArrayList<String>();
+      int comptefin[];
+      ArrayList<String> hash=new ArrayList<String>();
+      HashtagEntity ht[];
+
+    for(int l=0;l<tweets.size();l++){
+      ht=tweets.get(l).getHashtagEntities();
 
 
+      for(int i=0;i<ht.length;i++){
+        for(int j=i+1;j<ht.length;j++){
+            fin.add("#"+ht[i].getText()+"/#"+ht[j].getText());
+        }
+      }
+
+    }
+
+    comptefin=new int[fin.size()];
+    for(int k=0;k<comptefin.length;k++){
+      comptefin[k]=1;
+    }
+
+    for(int i=0;i<tweets.size();i++){
+      ht=tweets.get(i).getHashtagEntities();
+      hash.clear();
+      for(int j=0;j<ht.length;j++){
+        for(int k=j+1;k<ht.length;k++){
+            hash.add("#"+ht[j].getText()+"/#"+ht[k].getText());
+        }
+      }
+
+        for(int l=0;l<hash.size();l++){
+          for(int m=0;m<fin.size();m++){
+            if(hash.get(l).equals(fin.get(m))){
+              //System.out.println("bah y a des doublons");
+              int c=comptefin[m];
+              comptefin[m]=c+1;
+            }
+          }
+        }
+
+    }
+
+    for(int i=0;i<hash.size();i++){
+      System.out.println("Le couple "+fin.get(i)+" est apparu "+comptefin[i]+" fois.");
+    }
+
+  }
 
 
 
@@ -114,7 +162,7 @@ return tweets;
       algorigolo a=new algorigolo();
       //a.algoHash("2020-03-21","2020-03-22","mort");
       //a.testTweet2("hardy");
-      a.ecrire(a.testTweet2("hardy"),"test.ser");
+      a.classerCH(a.testTweet2("COVID19"));
 
 
 
@@ -188,52 +236,4 @@ public void swapUser(ArrayList<User> q,int i,int j){
 }
 
 
-
-
-public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans une arraylist et ajouter un compteurtw
-      Hashtable<String,ArrayList<Status>> htt =new Hashtable<String,ArrayList<Status>>(); //htt ??
-      ArrayList<String> fin = new ArrayList<String>();
-      ArrayList<int> comptefin = new ArrayList<int>();
-      ArrayList<String> hash=new ArrayList<String>();
-      HashtagEntity ht[];
-
-    for(int i=0;i<tweets.size();i++){
-      ht=tweets.get(i).getHashtagEntities();
-    }
-
-    for(int i=0;i<ht.length;i++){
-      for(int j=i+1;j<ht.length;j++){
-          fin.add(ht[i].getText()+" "+ht[j].getText());
-      }
-      for(int i=0;i<fin.size();i++){
-        comptefin.add(1);
-      }
-
-    }
-
-    for(int i=0;i<tweets.size();i++){
-      ht=tweets.get(i).getHashtagEntities();
-      for(int j=0;j<ht.length;j++){
-        for(int k=j+1;k<ht.length;k++){
-            hash.add(ht[j].getText()+" "+ht[k].getText());
-        }
-      }
-
-        for(int l=0;l<hash.size();l++){
-          for(int m=0;m<fin.size();m++){
-            if(hash.get(l).equals(fin.get(m)))){
-              comptefin.set(m,comptefin.get(m)++);
-            }
-          }
-        }
-
-
-    }
-
-
-
-
-
-
-
-    }
+}
