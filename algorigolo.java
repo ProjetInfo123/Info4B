@@ -59,7 +59,7 @@ public class algorigolo{
 
 Twitter twitter = new TwitterFactory().getInstance();
 Query query = new Query(term);
-int numberOfTweets = 1000;
+int numberOfTweets = 10000;
 long lastID = Long.MAX_VALUE;
 ArrayList<Status> tweets = new ArrayList<Status>();
 while (tweets.size () < numberOfTweets) {
@@ -122,7 +122,7 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
 
     comptefin=new int[fin.size()];
     for(int k=0;k<comptefin.length;k++){
-      comptefin[k]=1;
+      comptefin[k]=0;
     }
 
     for(int i=0;i<tweets.size();i++){
@@ -136,8 +136,8 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
 
         for(int l=0;l<hash.size();l++){
           for(int m=0;m<fin.size();m++){
-            if(hash.get(l).equals(fin.get(m))){
-              //System.out.println("bah y a des doublons");
+            if(hash.get(l).equalsIgnoreCase(fin.get(m)) ){
+              //System.out.println("bah la taille c'est "+fin.size());
               int c=comptefin[m];
               comptefin[m]=c+1;
             }
@@ -146,9 +146,11 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
 
     }
 
-    for(int i=0;i<hash.size();i++){
+    for(int i=0;i<fin.size();i++){
       System.out.println("Le couple "+fin.get(i)+" est apparu "+comptefin[i]+" fois.");
     }
+
+    System.out.println("Il y a "+fin.size()+" couples.");
 
   }
 
@@ -162,7 +164,7 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
       algorigolo a=new algorigolo();
       //a.algoHash("2020-03-21","2020-03-22","mort");
       //a.testTweet2("hardy");
-      a.classerCH(a.testTweet2("COVID19"));
+      a.classerCH(a.testTweet2("Trump"));
 
 
 
