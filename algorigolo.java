@@ -59,7 +59,7 @@ public class algorigolo{
 
 Twitter twitter = new TwitterFactory().getInstance();
 Query query = new Query(term);
-int numberOfTweets = 10000;
+int numberOfTweets = 200;
 long lastID = Long.MAX_VALUE;
 ArrayList<Status> tweets = new ArrayList<Status>();
 while (tweets.size () < numberOfTweets) {
@@ -96,7 +96,14 @@ return tweets;
 
 
 
-
+int retournechar(String s, char a){
+  for(int i=0;i<s.length();i++){
+    if(s.charAt(i)==a){
+      return i;
+    }
+  }
+  return -1;
+}
 
 
 
@@ -108,17 +115,41 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
       ArrayList<String> hash=new ArrayList<String>();
       HashtagEntity ht[];
 
-    for(int l=0;l<tweets.size();l++){
+
+      for(int l=0;l<tweets.size();l++){
       ht=tweets.get(l).getHashtagEntities();
 
-
-      for(int i=0;i<ht.length;i++){
-        for(int j=i+1;j<ht.length;j++){
-            fin.add("#"+ht[i].getText()+"/#"+ht[j].getText());
+        int v=0;
+        //y a des doublons.
+        for(int i=0;i<ht.length;i++){
+          for(int j=i+1;j<ht.length;j++){
+            String h1="#"+ht[i].getText();
+            String h2="#"+ht[j].getText();
+            if(!(h1.equalsIgnoreCase(h2))){
+              for(int k=0;k<fin.size();k++){
+                v=0;
+                String h3="";
+                String h4="";
+                for(int m=0;m<retournechar(fin.get(k),'/');m++){
+                  h3+=fin.get(k).charAt(m);
+                }
+                for(int n=retournechar(fin.get(k),'/')+1;n<fin.get(k).length();n++){
+                  h4+=fin.get(k).charAt(n);
+                }
+                if((h3.equalsIgnoreCase(h1) && h4.equalsIgnoreCase(h2)) || (h3.equalsIgnoreCase(h2) && h4.equalsIgnoreCase(h1))){
+                  v=1;
+                }
+              }
+              /*if(fin.size()==0){
+                fin.add(h1+"/"+h2);
+              }*/
+              if(v==0){
+                fin.add(h1+"/"+h2);
+              }
+            }
+          }
         }
       }
-
-    }
 
     comptefin=new int[fin.size()];
     for(int k=0;k<comptefin.length;k++){
@@ -131,12 +162,13 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
       for(int j=0;j<ht.length;j++){
         for(int k=j+1;k<ht.length;k++){
             hash.add("#"+ht[j].getText()+"/#"+ht[k].getText());
+            hash.add("#"+ht[k].getText()+"/#"+ht[j].getText());
         }
       }
 
         for(int l=0;l<hash.size();l++){
           for(int m=0;m<fin.size();m++){
-            if(hash.get(l).equalsIgnoreCase(fin.get(m)) ){
+            if(hash.get(l).equalsIgnoreCase(fin.get(m))){
               //System.out.println("bah la taille c'est "+fin.size());
               int c=comptefin[m];
               comptefin[m]=c+1;
@@ -164,7 +196,7 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
       algorigolo a=new algorigolo();
       //a.algoHash("2020-03-21","2020-03-22","mort");
       //a.testTweet2("hardy");
-      a.classerCH(a.testTweet2("Trump"));
+      a.classerCH(a.testTweet2("COVID19"));
 
 
 
