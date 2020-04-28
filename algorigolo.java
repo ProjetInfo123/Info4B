@@ -8,7 +8,7 @@ public class algorigolo{
       TwitterFactory tf = new TwitterFactory();   //utiliser TwitterStream, TwitterListener et FilterQuery
       Twitter tweet = tf.getInstance();
       Query q = new Query(h);
-      int nbt=201;
+      int nbt=1000;
       long lastID = Long.MAX_VALUE;
       q.setSince(debut);
       q.setUntil(fin);
@@ -93,6 +93,83 @@ return tweets;
 }
 
 
+int testTweet3(String term,String debut,String fin){
+
+Twitter twitter = new TwitterFactory().getInstance();
+Query query = new Query(term);
+query.setSince(debut);
+query.setUntil(fin);
+int numberOfTweets = 30;
+long lastID = Long.MAX_VALUE;
+ArrayList<Status> tweets = new ArrayList<Status>();
+while (tweets.size () < numberOfTweets) {
+if (numberOfTweets - tweets.size() > 100)
+  query.setCount(100);
+else
+  query.setCount(numberOfTweets - tweets.size());
+try {
+  QueryResult result = twitter.search(query);
+  tweets.addAll(result.getTweets());
+  System.out.println("Gathered " + tweets.size() + " tweets");
+  for (Status t: tweets)
+    if(t.getId() < lastID) lastID = t.getId();
+
+}
+
+catch (TwitterException te) {
+  System.out.println("Couldn't connect: " + te);
+};
+query.setMaxId(lastID-1);
+}
+
+for (int i = 0; i < tweets.size(); i++) {
+Status t = (Status) tweets.get(i);
+String user = t.getUser().getScreenName();
+String msg = t.getText();
+String time = "";
+  System.out.println(i + " USER: " + user + " wrote: " + msg);
+}
+return tweets.size();
+}
+
+
+
+/*int testTweet4(User u,String term,String debut,String fin){
+
+Twitter twitter = new TwitterFactory().getInstance();
+Query query = new Query(term);
+query.setSince(debut);
+query.setUntil(fin);
+int numberOfTweets = int.MAX_VALUE;
+long lastID = u.getId();
+ArrayList<Status> tweets = new ArrayList<Status>();
+while (tweets.size () < numberOfTweets) {
+if (numberOfTweets - tweets.size() > 100)
+  query.setCount(100);
+else
+  query.setCount(numberOfTweets - tweets.size());
+try {
+  QueryResult result = twitter.search(query);
+  tweets.addAll(result.getTweets());
+  System.out.println("Gathered " + tweets.size() + " tweets");
+catch (TwitterException te) {
+  System.out.println("Couldn't connect: " + te);
+};
+}
+int rt=0;
+for (int i = 0; i < tweets.size(); i++) {
+Status t = (Status) tweets.get(i);
+  if(t.isRetweet()){
+    rt++;
+    String user = t.getUser().getScreenName();
+    String msg = t.getText();
+    String time = "";
+    System.out.println(i + " USER: " + user + " wrote: " + msg);
+  }
+}
+return rt;
+}*/
+
 
 
 
@@ -117,7 +194,7 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
 
 
       for(int l=0;l<tweets.size();l++){
-      ht=tweets.get(l).getHashtagEntities();
+        ht=tweets.get(l).getHashtagEntities();
 
         int v=0;
         //y a des doublons.
@@ -125,9 +202,9 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
           for(int j=i+1;j<ht.length;j++){
             String h1="#"+ht[i].getText();
             String h2="#"+ht[j].getText();
+            v=0;
             if(!(h1.equalsIgnoreCase(h2))){
               for(int k=0;k<fin.size();k++){
-                v=0;
                 String h3="";
                 String h4="";
                 for(int m=0;m<retournechar(fin.get(k),'/');m++){
@@ -140,9 +217,6 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
                   v=1;
                 }
               }
-              /*if(fin.size()==0){
-                fin.add(h1+"/"+h2);
-              }*/
               if(v==0){
                 fin.add(h1+"/"+h2);
               }
@@ -186,6 +260,47 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
 
   }
 
+ /*public void evolution(User u,String hashtag){
+   int evol[]=new int[2];
+   algorigolo a=new algorigolo();
+   if(u==null && hashtag!=null){
+     evol[0]=a.testTweet3(hashtag,"2020-04-24","2020-04-25");
+     evol[1]=a.testTweet3(hashtag,"2020-04-25","2020-04-26");
+     if(evol[0]<evol[1]){
+        System.out.println("augmentation");
+      }
+      else{
+        if(evol[0]>evol[1]){
+          System.out.println("diminution");
+        }
+        else{
+          System.out.println("pas de diff");
+        }
+      }
+   }else{
+     if(u!=null && hashtag==null)
+     {
+       evol[0]=a.testTweet4(u,"est","2020-04-24","2020-04-25")
+       evol[1]=a.testTweet3(u,"est","2020-04-25","2020-04-26");
+       if(evol[0]<evol[1]){
+          System.out.println("augmentation");
+        }
+        else{
+          if(evol[0]>evol[1]){
+            System.out.println("diminution");
+          }
+          else{
+            System.out.println("pas de diff");
+          }
+     }
+     else{
+     System.out.println("erreur");
+   }
+
+   }
+
+
+ }*/
 
 
 
@@ -196,7 +311,8 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
       algorigolo a=new algorigolo();
       //a.algoHash("2020-03-21","2020-03-22","mort");
       //a.testTweet2("hardy");
-      a.classerCH(a.testTweet2("COVID19"));
+      a.classerCH(a.testTweet2("Deconfinement"));
+      //a.evolution(null,"#Deconfinement");
 
 
 
