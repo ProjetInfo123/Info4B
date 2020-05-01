@@ -95,80 +95,76 @@ return tweets;
 
 int testTweet3(String term,String debut,String fin){
 
-Twitter twitter = new TwitterFactory().getInstance();
-Query query = new Query(term);
-query.setSince(debut);
-query.setUntil(fin);
-int numberOfTweets = 30;
-long lastID = Long.MAX_VALUE;
-ArrayList<Status> tweets = new ArrayList<Status>();
-while (tweets.size () < numberOfTweets) {
-if (numberOfTweets - tweets.size() > 100)
-  query.setCount(100);
-else
-  query.setCount(numberOfTweets - tweets.size());
-try {
-  QueryResult result = twitter.search(query);
-  tweets.addAll(result.getTweets());
-  System.out.println("Gathered " + tweets.size() + " tweets");
-  for (Status t: tweets)
-    if(t.getId() < lastID) lastID = t.getId();
+  Twitter twitter = new TwitterFactory().getInstance();
+  Query query = new Query(term);
+  query.setSince(debut);
+  query.setUntil(fin);
+  int numberOfTweets = 30;
+  long lastID = Long.MAX_VALUE;
+  ArrayList<Status> tweets = new ArrayList<Status>();
+  while (tweets.size () < numberOfTweets) {
+  if (numberOfTweets - tweets.size() > 100)
+    query.setCount(100);
+  else
+    query.setCount(numberOfTweets - tweets.size());
+  try {
+    QueryResult result = twitter.search(query);
+    tweets.addAll(result.getTweets());
+    System.out.println("Gathered " + tweets.size() + " tweets");
+    for (Status t: tweets)
+      if(t.getId() < lastID) lastID = t.getId();
 
-}
+  }
 
-catch (TwitterException te) {
-  System.out.println("Couldn't connect: " + te);
-};
-query.setMaxId(lastID-1);
-}
+  catch (TwitterException te) {
+    System.out.println("Couldn't connect: " + te);
+  };
+  query.setMaxId(lastID-1);
+  }
 
-for (int i = 0; i < tweets.size(); i++) {
-Status t = (Status) tweets.get(i);
-String user = t.getUser().getScreenName();
-String msg = t.getText();
-String time = "";
-  System.out.println(i + " USER: " + user + " wrote: " + msg);
-}
-return tweets.size();
-}
-
-
-
-/*long testTweet4(User u,String term,String debut,String fin){
-
-Twitter twitter = new TwitterFactory().getInstance();
-Query query = new Query(term);
-query.setSince(debut);
-query.setUntil(fin);
-long numberOfTweets = Long.MAX_VALUE;
-long lastID = u.getId();
-ArrayList<Status> tweets = new ArrayList<Status>();
-while (tweets.size () < numberOfTweets) {
-if (numberOfTweets - tweets.size() > 100)
-  query.setCount(100);
-else
-  query.setCount(numberOfTweets - (long)tweets.size());
-try {
-  QueryResult result = twitter.search(query);
-  tweets.addAll(result.getTweets());
-  System.out.println("Gathered " + tweets.size() + " tweets");
-}catch (TwitterException te) {
-  System.out.println("Couldn't connect: " + te);
-};
-long rt=0;
-for (int i = 0; i < tweets.size(); i++) {
-Status t = (Status) tweets.get(i);
-  if(t.isRetweet()){
-    rt++;
-    String user = t.getUser().getScreenName();
-    String msg = t.getText();
-    String time = "";
+  for (int i = 0; i < tweets.size(); i++) {
+  Status t = (Status) tweets.get(i);
+  String user = t.getUser().getScreenName();
+  String msg = t.getText();
+  String time = "";
     System.out.println(i + " USER: " + user + " wrote: " + msg);
   }
+  return tweets.size();
+  }
+
+
+
+  int testTweet4(User u,String term,String debut,String fin){
+
+  Twitter twitter = new TwitterFactory().getInstance();
+  Query query = new Query(term);
+  query.setSince(debut);
+  query.setUntil(fin);
+  int numberOfTweets = 500;
+  long lastID = u.getId();
+  ArrayList<Status> tweets = new ArrayList<Status>();
+  while (tweets.size () < numberOfTweets) {
+  if (numberOfTweets - tweets.size() > 100)
+    query.setCount(100);
+  else
+    query.setCount(numberOfTweets - tweets.size());
+  try {
+    QueryResult result = twitter.search(query);
+    tweets.addAll(result.getTweets());
+    System.out.println("Gathered " + tweets.size() + " tweets");
+  }catch (TwitterException te) {
+    System.out.println("Couldn't connect: " + te);
+  };
 }
-return rt;
+  int nbr=0;
+  for(int i=0;i<tweets.size();i++){
+    if(u.getScreenName().equals(tweets.get(i).getUser().getScreenName()) && tweets.get(i).isRetweet()){
+      nbr++;
+    }
+  }
+  return nbr;
+
 }
-}*/
 
 
 
@@ -277,12 +273,12 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
           System.out.println("pas de diff");
         }
       }
-   }/*else{
+   }else{
      if(u!=null && hashtag==null)
      {
-       long evol[]=new long[2];
-       evol[0]=this.testTweet4(u,"est","2020-04-24","2020-04-25");
-       evol[1]=this.testTweet4(u,"est","2020-04-25","2020-04-26");
+       int evol[]=new int[2];
+       evol[0]=this.testTweet4(u,"macron","2020-04-24","2020-04-25");
+       evol[1]=this.testTweet4(u,"macron","2020-04-25","2020-04-26");
        if(evol[0]<evol[1]){
           System.out.println("augmentation");
         }
@@ -299,7 +295,7 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
      System.out.println("erreur");
    }
 
- }*/
+ }
 
 
  }
@@ -312,11 +308,11 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
       Twitter twitter = TwitterFactory.getSingleton();
       algorigolo a=new algorigolo();
       //a.algoHash("2020-03-21","2020-03-22","mort");
-      //ArrayList<Status> t=a.testTweet2("twitter");
+      ArrayList<Status> t=a.testTweet2("macron");
       //System.out.println(t.get(0).getRetweetCount());
       //a.classerCH(a.testTweet2("Deconfinement"));
       //User u=new User();
-      //a.evolution(u,null);
+      a.evolution(t.get(0).getUser(),null);
 
 
 
