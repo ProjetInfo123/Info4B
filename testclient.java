@@ -1,11 +1,11 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import twitter4j.*;
+//import twitter4j.*;
 
 
 public class testclient{
-   static int port = 8080;
+   static int port = 6463;
    static String ip="127.0.0.1";
    static boolean arreter=false;
 
@@ -45,7 +45,7 @@ public class testclient{
   }
 
 
-ArrayList<Status> testTweet2(String term){
+/*ArrayList<Status> testTweet2(String term){
 
 Twitter twitter = new TwitterFactory().getInstance();
 Query query = new Query(term);
@@ -80,14 +80,13 @@ String time = "";
   System.out.println(i + " USER: " + user + " wrote: " + msg);
 }
 return tweets;
-}
+}*/
 
 }
 
 
 
  class EssaiClient extends Thread{
-  private ArrayList<Status> tweets;
   private PrintWriter pw;
 
   public EssaiClient(PrintWriter pw){
@@ -96,9 +95,10 @@ return tweets;
   }
 
   public void run(){
+    /*ArrayList<Status> tweets=this.testTweet2("Jupiter");
       for(int i=0;i<tweets.size();i++){
         pw.println(tweets.get(i).getText());
-      }
+      }*/
     testclient.arreter=true;
   }
 

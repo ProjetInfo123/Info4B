@@ -304,6 +304,9 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
 
 
 
+
+
+
     public static void main(String[] args) throws TwitterException{
       Twitter twitter = TwitterFactory.getSingleton();
       algorigolo a=new algorigolo();

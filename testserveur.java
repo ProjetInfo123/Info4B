@@ -4,7 +4,7 @@ import java.util.*;
 import twitter4j.*;
 
 public class testserveur{
-  static int port = 8080;
+  static int port = 6463;
    static final int maxClients=50;
    static PrintWriter pw[];
    static int numClient=0;
