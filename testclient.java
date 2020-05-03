@@ -10,7 +10,7 @@ public class testclient{
    static boolean arreter=false;
 
 
-
+//utiliser DescrTweets dans la méthode ecrire de algorigolo pour l'utiliser dans un client
    public static void main(String[] args) throws Exception {
        if (args.length!=0){
           ip=args[0];
