@@ -27,8 +27,9 @@ public class testclient{
        PrintWriter sisw = new PrintWriter(new BufferedWriter(
                                new OutputStreamWriter(socket.getOutputStream())),true);
 
+       algorigolo a = new algorigolo();
 
-       EssaiClient saisie=new EssaiClient(sisw);
+       EssaiClient saisie=new EssaiClient(sisw,a.testTweet2("suicune"),"suicune.txt");
        saisie.start();
 
        String str;
@@ -83,23 +84,39 @@ return tweets;
 }*/
 
 }
+public void ecrire(ArrayList<Status> st,String file){
+
+    FileOutputStream fo = null;
+      try{                                                    //écriture de st dans le file
+        fo = new FileOutputStream(file);
+        ObjectOutputStream out = new ObjectOutputStream(fo);
+        out.writeObject(st);
+      }
+      catch(Exception e)
+      {
+        System.out.println(e);
+       }
+}
 
 
 
  class EssaiClient extends Thread{
   private PrintWriter pw;
+  private ArraList<Status> st;
+  private String file;
 
-  public EssaiClient(PrintWriter pw){
-     //this.tweets=testclient.testTweet2("bts");
-     this.pw=pw;
+  public EssaiClient(PrintWriter pw,ArrayList<Status> st,String file){
+      this.st=st;
+      this.file=file;
+      this.pw=pw;
   }
 
   public void run(){
-    /*ArrayList<Status> tweets=this.testTweet2("Jupiter");
-      for(int i=0;i<tweets.size();i++){
-        pw.println(tweets.get(i).getText());
-      }*/
-    testclient.arreter=true;
+    this.ecrire(this.st,this.file);
+    for(int i=0;i<this.st.size();i++){
+      pw.println(st.get(i).getText());
+    }
+      }
   }
 
 }

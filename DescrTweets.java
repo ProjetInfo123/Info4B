@@ -214,15 +214,10 @@ public class DescrTweets {
  class Indexation extends Thread {//ajouter des hashtables
 		private LinkedList<Status> fa;
 		private DescrTweets d;
-		private boolean arret=false;
 
 		public Indexation(LinkedList<Status> fa,DescrTweets d){
 			this.fa=fa;
 			this.d=d;
-		}
-
-		public boolean isArret(){
-			return this.arret;
 		}
 
 		public void run(){
@@ -230,6 +225,5 @@ public class DescrTweets {
 					Status tweet=fa.removeFirst();
 					this.d.remplirHashtables(tweet);
 				}
-				this.arret=true;
-			}
 		}
+	}

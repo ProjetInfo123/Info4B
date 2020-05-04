@@ -5,7 +5,7 @@ import java.net.*;
 /**
 * Contributeurs : Eric Leclercq, Annabelle Gillet
 */
-public class ServeurMC {
+public class testserveur {
 static int port = 6463;
 static final int maxClients = 50;
 static int numClient = 0;
@@ -40,6 +40,7 @@ private boolean arret = false;
 private Socket s;
 private BufferedReader sisr;
 private PrintWriter sisw;
+private static ArrayList<Stockage> as=new ArrayList<>();
 
 public ConnexionClient(int id, Socket s) {
   this.id = id;
@@ -65,23 +66,14 @@ public ConnexionClient(int id, Socket s) {
   }
 }
 
-public void run(){
-  try {
-    while (true) {
-      /* 8 - Le serveur attend que le client envoie des messages avec le PrintWriter côté client
-      que le serveur recevra grâce à son BufferedReader (la méthode sisr.readLine() est bloquante) */
-      String str = sisr.readLine();          		// lecture du message
-      if (str.equals("END")) break;
-      System.out.println("recu de " + id + "," + pseudo + "=> " + str);   	// trace locale
-      // 11 - Le serveur envoie la réponse que le client attend
-      sisw.println(str);                     // renvoi d'un echo
-    }
-    // 13a - Le serveur ferme ses flux
-    sisr.close();
-    sisw.close();
-    s.close();
-  } catch(IOException e) {
-    e.printStackTrace();
+  public void run(){
+    Stockage st=new Stockage(fichier);
+    this.as.add(st);
+
+
+
+      sisr.close();
+      sisw.close();
+      s.close();
   }
-}
 }
