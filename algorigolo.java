@@ -55,13 +55,13 @@ public class algorigolo{
 
       }
 
-  ArrayList<Status> testTweet2(String term){
+  LinkedList<Status> testTweet2(String term){
 
 Twitter twitter = new TwitterFactory().getInstance();
 Query query = new Query(term);
 int numberOfTweets = 200;
 long lastID = Long.MAX_VALUE;
-ArrayList<Status> tweets = new ArrayList<Status>();
+LinkedList<Status> tweets = new LinkedList<Status>();
 while (tweets.size () < numberOfTweets) {
   if (numberOfTweets - tweets.size() > 100)
     query.setCount(100);

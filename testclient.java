@@ -28,17 +28,24 @@ public class testclient{
                                new OutputStreamWriter(socket.getOutputStream())),true);
 
        algorigolo a = new algorigolo();
+       String term="aypierre";
+       DescrTweets d = new DescrTweets(term);
+       LinkedList<Status> st=a.testTweet2(term);
+       Indexation ind =new Indexation(st,d);
+       ind.start();
+       d.serial();
 
-       EssaiClient saisie=new EssaiClient(sisw,a.testTweet2("suicune"),"suicune.txt");
-       saisie.start();
+       //EssaiClient saisie=new EssaiClient(sisw,st,term+".ser");
+       //saisie.start();
 
-       String str;
+       /*String str;
        while(arreter!=true) {
           str = sisr.readLine();
           System.out.println(str);
-       }
+       }*/
 
-       System.out.println("END");
+       sisw.println(term);
+       //System.out.println("END");
        //sisw.println("END") ;
        sisr.close();
        sisw.close();
@@ -84,7 +91,8 @@ return tweets;
 }*/
 
 }
-public void ecrire(ArrayList<Status> st,String file){
+
+public void ecrire(LinkedList<Status> st,String file){
 
     FileOutputStream fo = null;
       try{                                                    //écriture de st dans le file
@@ -102,21 +110,19 @@ public void ecrire(ArrayList<Status> st,String file){
 
  class EssaiClient extends Thread{
   private PrintWriter pw;
-  private ArraList<Status> st;
+  private LinkedList<Status> st;
   private String file;
 
-  public EssaiClient(PrintWriter pw,ArrayList<Status> st,String file){
+  public EssaiClient(PrintWriter pw,LinkedList<Status> st,String file,DescrTweets d){
       this.st=st;
       this.file=file;
       this.pw=pw;
+      this.d=d;
   }
 
   public void run(){
     this.ecrire(this.st,this.file);
-    for(int i=0;i<this.st.size();i++){
-      pw.println(st.get(i).getText());
-    }
-      }
-  }
+    pw.println(d.utilisateurs.toString());;
 
+  }
 }

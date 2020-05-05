@@ -39,8 +39,10 @@ public class DescrTweets {
 	}*/
 
 	private Stockage utilisateurs,date,message,hashtags,mentions,url;
+	private String terme="";
 
-	public DescrTweets(){
+	public DescrTweets(String t){
+		this.terme=t;
 		this.utilisateurs=new Stockage();
 		this.date=new Stockage();
 		this.message=new Stockage();
@@ -75,6 +77,15 @@ public class DescrTweets {
 		System.out.println(this.hashtags.toString());
 		System.out.println(this.mentions.toString());
 		System.out.println(this.url.toString());
+	}
+
+	public void serial(){
+		this.utilisateurs.write(terme+"_user.ser");
+		this.date.write(terme+"_date.ser");
+		this.message.write(terme+"_text.ser");
+		this.hashtags.write(terme+"_hashtag.ser");
+		this.mentions.write(terme+"_mention.ser");
+		this.url.write(terme+"_url.ser");
 	}
 
 
