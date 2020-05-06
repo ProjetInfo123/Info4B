@@ -1,4 +1,4 @@
-
+import java.util.*;
 import java.io.*;
 import java.net.*;
 
@@ -6,7 +6,7 @@ import java.net.*;
 * Contributeurs : Eric Leclercq, Annabelle Gillet
 */
 public class testserveur {
-  static int port = 6463;
+  static int port = 8080;
   static final int maxClients = 50;
   static int numClient = 0;
 
@@ -80,9 +80,12 @@ class ConnexionClient extends Thread {
 
 
 
-
+    try{
       sisr.close();
       sisw.close();
       s.close();
+    }catch(IOException e) {
+      e.printStackTrace();
+    }
   }
 }

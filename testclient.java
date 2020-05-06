@@ -1,11 +1,11 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-//import twitter4j.*;
+import twitter4j.*;
 
 
 public class testclient{
-   static int port = 6463;
+   static int port = 8080;
    static String ip="127.0.0.1";
    static boolean arreter=false;
 
@@ -28,11 +28,13 @@ public class testclient{
                                new OutputStreamWriter(socket.getOutputStream())),true);
 
        algorigolo a = new algorigolo();
-       String term="aypierre";
+       String term="Adele";
        DescrTweets d = new DescrTweets(term);
        LinkedList<Status> st=a.testTweet2(term);
-       Indexation ind =new Indexation(st,d);
-       ind.start();
+       Indexation indun =new Indexation(st,d);
+       Indexation indeux=new Indexation(st,d);
+       indun.start();
+       indeux.start();
        d.serial();
 
        //EssaiClient saisie=new EssaiClient(sisw,st,term+".ser");
@@ -92,7 +94,7 @@ return tweets;
 
 }
 
-public void ecrire(LinkedList<Status> st,String file){
+/*public void ecrire(LinkedList<Status> st,String file){
 
     FileOutputStream fo = null;
       try{                                                    //écriture de st dans le file
@@ -125,4 +127,4 @@ public void ecrire(LinkedList<Status> st,String file){
     pw.println(d.utilisateurs.toString());;
 
   }
-}
+}*/

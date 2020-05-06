@@ -102,7 +102,7 @@ public class DescrTweets {
     Query query = new Query("je binome");
 		query.setCount(100);
     QueryResult result = twitter.search(query);
-		DescrTweets o=new DescrTweets();
+		DescrTweets o=new DescrTweets("je binome");
 
 		for (Status status : result.getTweets()) {
 				//o=new DescrTweets(status);
@@ -119,9 +119,9 @@ public class DescrTweets {
 
 		Indexation i=new Indexation(fa,o);
 		i.start();
-		while(!i.isArret()){
+		/*while(!i.isArret()){
 			System.out.println("C'est en cours.");
-		}
+		}*/
 		o.afficher();
 
 

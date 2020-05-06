@@ -5,7 +5,7 @@ import java.net.*;
 /**
 * Contributeurs : Eric Leclercq, Annabelle Gillet
 */
-public class ServeurMC {
+public class Serveur {
 static int port = 6463;
 static final int maxClients = 50;
 static int numClient = 0;
@@ -33,7 +33,7 @@ public static void main(String[] args) throws Exception {
 
 }
 
-class ConnexionClient extends Thread {
+/*class ConnexionClient extends Thread {
 private int id;
 private String pseudo;
 private boolean arret = false;
@@ -49,7 +49,7 @@ public ConnexionClient(int id, Socket s) {
   1) un flux entrant (BufferedReader) afin de recevoir ce que le client envoie
   2) un flux sortant (PrintWriter) afin d'envoyer des messages au client */
   // BufferedReader permet de lire par ligne
-  try {
+  /*try {
     sisr = new BufferedReader(new InputStreamReader(s.getInputStream()));
     sisw = new PrintWriter( new BufferedWriter(
             new OutputStreamWriter(s.getOutputStream())),true);
@@ -70,7 +70,7 @@ public void run(){
     while (true) {
       /* 8 - Le serveur attend que le client envoie des messages avec le PrintWriter côté client
       que le serveur recevra grâce à son BufferedReader (la méthode sisr.readLine() est bloquante) */
-      String str = sisr.readLine();          		// lecture du message
+      /*String str = sisr.readLine();          		// lecture du message
       if (str.equals("END")) break;
       System.out.println("recu de " + id + "," + pseudo + "=> " + str);   	// trace locale
       // 11 - Le serveur envoie la réponse que le client attend
@@ -84,4 +84,4 @@ public void run(){
     e.printStackTrace();
   }
 }
-}
+}*/

@@ -311,7 +311,7 @@ public void classerCH(ArrayList<Status> tweets){   //classer les hashtag dans un
       Twitter twitter = TwitterFactory.getSingleton();
       algorigolo a=new algorigolo();
       //a.algoHash("2020-03-21","2020-03-22","mort");
-      ArrayList<Status> t=a.testTweet2("macron");
+      LinkedList<Status> t=a.testTweet2("macron");
       //System.out.println(t.get(0).getRetweetCount());
       //a.classerCH(a.testTweet2("Deconfinement"));
       //User u=new User();
