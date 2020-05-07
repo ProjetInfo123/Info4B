@@ -1,6 +1,6 @@
 /*pour compiler :
     javac -cp twitter4j-core-4.0.7.jar *.java
-    java -cp twitter4j-core-4.0.7.jar algorigolo.java
+    java -cp twitter4j-core-4.0.7.jar Assaghir_Eguienta.java
 */
 
 
