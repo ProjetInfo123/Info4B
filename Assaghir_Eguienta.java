@@ -52,6 +52,22 @@ public class Assaghir_Eguienta {
 
  class algorigolo{
       ArrayList<Status> st = new ArrayList<Status>();
+
+      public algorigolo(String file){
+        try {
+          FileInputStream fileIn = new FileInputStream(file);
+          ObjectInputStream in = new ObjectInputStream(fileIn);
+          this.st = (ArrayList<Status>)in.readObject();
+        }
+        catch (Exception e) {
+          System.out.println(e);
+        }
+      }
+
+      public ArrayList<Status> getListe(){
+        return this.st;
+      }
+
       public void algoHash(String debut,String fin,String h) throws TwitterException{
         TwitterFactory tf = new TwitterFactory();   //utiliser TwitterStream, TwitterListener et FilterQuery
         Twitter tweet = tf.getInstance();
@@ -437,14 +453,12 @@ public class Assaghir_Eguienta {
    static int port = 8080;
    static String ip="127.0.0.1";
    static boolean arreter=false;
+   private String terme;
 
 
 //utiliser DescrTweets dans la méthode ecrire de algorigolo pour l'utiliser dans un client
    public static void main(String[] args) throws Exception {
-       if (args.length!=0){
-          ip=args[0];
-          port=Integer.parseInt(args[1]);
-        }
+       this.terme=args[0];
        Socket socket = new Socket(ip,port);
 
        System.out.println("SOCKET = " + socket);
@@ -483,6 +497,8 @@ public class Assaghir_Eguienta {
        sisw.close();
        socket.close();
   }
+
+
 
 
 /*ArrayList<Status> testTweet2(String term){
