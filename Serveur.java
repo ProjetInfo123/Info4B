@@ -24,10 +24,10 @@ public static void main(String[] args) throws Exception {
     Socket soc = s.accept();
     /* 3 - Pour gérer plusieurs clients simultanément, le serveur attend que les clients se connectent,
     et dédie un thread à chacun d'entre eux afin de le gérer indépendamment des autres clients */
-    ConnexionClient cc = new ConnexionClient(numClient, soc);
+  /*  ConnexionClient cc = new ConnexionClient(numClient, soc);
     System.out.println("NOUVELLE CONNEXION - SOCKET => " + soc);
     numClient++;
-    cc.start();
+    cc.start();*/
   }
 }
 

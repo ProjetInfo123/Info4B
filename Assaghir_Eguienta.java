@@ -6,6 +6,7 @@ import twitter4j.*;
 
 public class Assaghir_Eguienta {
   public static void main(String args[]) throws Exception{
+    String terme= args[0];
     testclient tc=new testclient();
     Socket socket = new Socket(tc.ip,tc.port);
 
@@ -19,8 +20,7 @@ public class Assaghir_Eguienta {
                             new OutputStreamWriter(socket.getOutputStream())),true);
 
     algorigolo a = new algorigolo();
-    String term="Stranger Things";
-    DescrTweets d = new DescrTweets(term);
+    DescrTweets d = new DescrTweets(terme);
     LinkedList<Status> st=a.testTweet2(term);
     Indexation indun =new Indexation(st,d);
     Indexation indeux=new Indexation(st,d);
@@ -52,21 +52,6 @@ public class Assaghir_Eguienta {
 
  class algorigolo{
       ArrayList<Status> st = new ArrayList<Status>();
-
-      public algorigolo(String file){
-        try {
-          FileInputStream fileIn = new FileInputStream(file);
-          ObjectInputStream in = new ObjectInputStream(fileIn);
-          this.st = (ArrayList<Status>)in.readObject();
-        }
-        catch (Exception e) {
-          System.out.println(e);
-        }
-      }
-
-      public ArrayList<Status> getListe(){
-        return this.st;
-      }
 
       public void algoHash(String debut,String fin,String h) throws TwitterException{
         TwitterFactory tf = new TwitterFactory();   //utiliser TwitterStream, TwitterListener et FilterQuery
@@ -453,12 +438,11 @@ public class Assaghir_Eguienta {
    static int port = 8080;
    static String ip="127.0.0.1";
    static boolean arreter=false;
-   private String terme;
+   private static String terme="Bernard";
 
 
 //utiliser DescrTweets dans la méthode ecrire de algorigolo pour l'utiliser dans un client
    public static void main(String[] args) throws Exception {
-       this.terme=args[0];
        Socket socket = new Socket(ip,port);
 
        System.out.println("SOCKET = " + socket);
@@ -471,9 +455,8 @@ public class Assaghir_Eguienta {
                                new OutputStreamWriter(socket.getOutputStream())),true);
 
        algorigolo a = new algorigolo();
-       String term="Stranger Things";
-       DescrTweets d = new DescrTweets(term);
-       LinkedList<Status> st=a.testTweet2(term);
+       DescrTweets d = new DescrTweets(terme);
+       LinkedList<Status> st=a.testTweet2(terme);
        Indexation indun =new Indexation(st,d);
        Indexation indeux=new Indexation(st,d);
        indun.start();
@@ -490,7 +473,7 @@ public class Assaghir_Eguienta {
        }*/
        System.out.println("fini de trier");
 
-       sisw.println(term);
+       sisw.println(terme);
        //System.out.println("END");
        //sisw.println("END") ;
        sisr.close();
@@ -726,6 +709,10 @@ class DescrTweets {
 			}
 	  }
 
+    public Hashtable<String,ArrayList<Status>> getListe(){
+      return this.tweets;
+    }
+
 		public void write(String file) {
 	    try {
 				FileOutputStream fileOut = new FileOutputStream(file);
@@ -750,32 +737,17 @@ class DescrTweets {
 			}
 		}
 
-		public Status getTweet(String s,Status t){
-			if(this.tweets.containsKey(s)){
-				ArrayList<Status> a=this.tweets.get(s);
-				for(int i=0;i<a.size();i++){
-					if(a.get(i).equals(t)){
-						return a.get(i);
-					}
-				}
-				return null;
-				}
-				else{
-					return null;
-				}
-		}
-
-		/*public int size(){
+		public int size(){
 			return this.tweets.size();
 		}
 
-		public Collection<Status> elements(){
+		/*public Collection<Status> elements(){
 			return this.tweets.values();
-		}
-
-		public Set cles(){
-			return this.tweets.keySet();
 		}*/
+
+		public Set getCles(){
+			return this.tweets.keySet();
+		}
 
 		public String toString(){
 			String s="";
