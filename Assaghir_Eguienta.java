@@ -2,11 +2,14 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import twitter4j.*;
+import java.util.concurrent.Semaphore;
 
 
 public class Assaghir_Eguienta {
   public static void main(String args[]) throws Exception{
-    String terme= args[0];
+    Scanner s=new Scanner(System.in);
+    System.out.println("Quel est le terme à rechercher ?");
+    String terme=s.next();
     testclient tc=new testclient();
     Socket socket = new Socket(tc.ip,tc.port);
 
@@ -21,11 +24,20 @@ public class Assaghir_Eguienta {
 
     algorigolo a = new algorigolo();
     DescrTweets d = new DescrTweets(terme);
-    LinkedList<Status> st=a.testTweet2(term);
-    Indexation indun =new Indexation(st,d);
-    Indexation indeux=new Indexation(st,d);
+    Semaphore sem=new Semaphore(1,true);
+    LinkedList<Status> st=a.testTweet2(terme);
+    Indexation indun =new Indexation(st,d,sem);
+    Indexation indeux=new Indexation(st,d,sem);
+    Indexation indrois=new Indexation(st,d,sem);
+    Indexation indatre=new Indexation(st,d,sem);
     indun.start();
     indeux.start();
+    indrois.start();
+    indatre.start();
+    while(st.size()!=0){
+      System.out.println(st.size());
+    }
+    System.out.println("après while "+st.size());
     d.serial();
 
     //EssaiClient saisie=new EssaiClient(sisw,st,term+".ser");
@@ -38,7 +50,7 @@ public class Assaghir_Eguienta {
     }*/
     System.out.println("fini de trier");
 
-    sisw.println(term);
+    sisw.println(terme);
     //System.out.println("END");
     //sisw.println("END") ;
     sisr.close();
@@ -457,10 +469,6 @@ public class Assaghir_Eguienta {
        algorigolo a = new algorigolo();
        DescrTweets d = new DescrTweets(terme);
        LinkedList<Status> st=a.testTweet2(terme);
-       Indexation indun =new Indexation(st,d);
-       Indexation indeux=new Indexation(st,d);
-       indun.start();
-       indeux.start();
        d.serial();
 
        //EssaiClient saisie=new EssaiClient(sisw,st,term+".ser");
@@ -631,15 +639,6 @@ class DescrTweets {
 
 	}
 
-	public void afficher(){
-		System.out.println(this.utilisateurs.toString());
-		System.out.println(this.date.toString());
-		System.out.println(this.message.toString());
-		System.out.println(this.hashtags.toString());
-		System.out.println(this.mentions.toString());
-		System.out.println(this.url.toString());
-	}
-
 	public void serial(){
 		this.utilisateurs.write(terme+"_user.ser");
 		this.date.write(terme+"_date.ser");
@@ -678,12 +677,9 @@ class DescrTweets {
 		}*/
 
 
-		Indexation i=new Indexation(fa,o);
-		i.start();
 		/*while(!i.isArret()){
 			System.out.println("C'est en cours.");
 		}*/
-		o.afficher();
 
 
 
@@ -775,16 +771,25 @@ class DescrTweets {
  class Indexation extends Thread {//ajouter des hashtables
 		private LinkedList<Status> fa;
 		private DescrTweets d;
+    private Semaphore s;
 
-		public Indexation(LinkedList<Status> fa,DescrTweets d){
+		public Indexation(LinkedList<Status> fa,DescrTweets d,Semaphore s){
 			this.fa=fa;
 			this.d=d;
+      this.s=s;
 		}
 
 		public void run(){
 				while(fa.size()>0){
-					Status tweet=fa.removeFirst();
-					this.d.remplirHashtables(tweet);
+          try{
+            s.acquire();
+            //sleep(1);
+            //if(fa.size()!=0){
+              Status tweet=fa.removeFirst();
+              this.d.remplirHashtables(tweet);
+            //}
+            s.release();
+          }catch(Exception e){System.out.println(e);}
 				}
 		}
 	}

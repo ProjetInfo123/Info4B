@@ -8,7 +8,7 @@ import twitter4j.*;
 */
 public class testserveur {
     private static int port = 8080;
-    private static int maxClients = 3;
+    private static int maxClients = 6;
     private static int numClient = 0;
     private static Rangement user =new Rangement();
     private static Rangement date =new Rangement();
@@ -35,16 +35,18 @@ public class testserveur {
         System.out.println("NOUVELLE CONNEXION - SOCKET => " + soc);
         numClient++;
         cc.start();
+        if(numClient==maxClients){
+          while(!cc.isArret()){}
+          System.out.println(user.toString());
+          System.out.println(date.toString());
+          System.out.println(text.toString());
+          System.out.println(hashtag.toString());
+          System.out.println(mention.toString());
+          System.out.println(url.toString());
+        }
     }
-    while(hashtag.size()==0){
-      System.out.println(hashtag.size());
-    }
-    if(numClient==3){
-    System.out.println(hashtag.size());
-    System.out.println(hashtag.toString());}
   }
-
-  }
+}
 
   class ConnexionClient extends Thread {
     private String terme;
@@ -52,6 +54,7 @@ public class testserveur {
     private BufferedReader sisr;
     private PrintWriter sisw;
     private Rangement u,d,t,h,m,l;
+    private boolean arret=false;
 
     public ConnexionClient(Socket s, Rangement u,Rangement d,Rangement t,Rangement h,Rangement m,Rangement l) {
       this.s=s;
@@ -73,6 +76,10 @@ public class testserveur {
       } catch(IOException e) {
         e.printStackTrace();
       }
+    }
+
+    public boolean isArret(){
+      return this.arret;
     }
 
     public void run(){
@@ -151,6 +158,7 @@ public class testserveur {
 
 
       try{
+        this.arret=true;
         sisr.close();
         sisw.close();
         s.close();
