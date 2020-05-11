@@ -3,12 +3,9 @@ import java.io.*;
 import java.net.*;
 import twitter4j.*;
 
-/**
-* Contributeurs : Eric Leclercq, Annabelle Gillet
-*/
 public class testserveur {
     private static int port = 8080;
-    private static int maxClients = 6;
+    private static int maxClients = 2;
     private static int numClient = 0;
     private static Rangement user =new Rangement();
     private static Rangement date =new Rangement();
@@ -17,34 +14,25 @@ public class testserveur {
     private static Rangement mention =new Rangement();
     private static Rangement url =new Rangement();
 
-    // Pour utiliser un autre port pour le serveur, l'exécuter avec la commande : java ServeurMC 8081
     public static void main(String[] args) throws Exception {
-      if (args.length != 0) {
-        port = Integer.parseInt(args[0]);
-      }
-      // 1 - Ouverture du ServerSocket par le serveur
       ServerSocket s = new ServerSocket(port);
-      System.out.println("SOCKET ECOUTE CREE => " + s);
+      System.out.println("Le serveur attend une connexion " + s);
       while (numClient < maxClients){
-        /* 2 - Attente d'une connexion client (la méthode s.accept() est bloquante
-        tant qu'un client ne se connecte pas) */
         Socket soc = s.accept();
-        /* 3 - Pour gérer plusieurs clients simultanément, le serveur attend que les clients se connectent,
-        et dédie un thread à chacun d'entre eux afin de le gérer indépendamment des autres clients */
         ConnexionClient cc = new ConnexionClient(soc,user,date,text,hashtag,mention,url);
-        System.out.println("NOUVELLE CONNEXION - SOCKET => " + soc);
+        System.out.println("Nouvelle connexion =" + soc);
         numClient++;
         cc.start();
         if(numClient==maxClients){
           while(!cc.isArret()){}
-          System.out.println(user.toString());
-          System.out.println(date.toString());
-          System.out.println(text.toString());
-          System.out.println(hashtag.toString());
-          System.out.println(mention.toString());
-          System.out.println(url.toString());
         }
-    }
+      }
+      System.out.println(user.toString());
+      System.out.println(date.toString());
+      System.out.println(text.toString());
+      System.out.println(hashtag.toString());
+      System.out.println(mention.toString());
+      System.out.println(url.toString());
   }
 }
 
@@ -64,11 +52,6 @@ public class testserveur {
       this.h=h;
       this.m=m;
       this.l=l;
-
-      /* 5a - A partir du Socket connectant le serveur à un client, le serveur ouvre 2 flux :
-      1) un flux entrant (BufferedReader) afin de recevoir ce que le client envoie
-      2) un flux sortant (PrintWriter) afin d'envoyer des messages au client */
-      // BufferedReader permet de lire par ligne
       try {
         sisr = new BufferedReader(new InputStreamReader(s.getInputStream()));
         sisw = new PrintWriter( new BufferedWriter(
@@ -154,9 +137,6 @@ public class testserveur {
         }
       }
 
-
-
-
       try{
         this.arret=true;
         sisr.close();
@@ -168,7 +148,7 @@ public class testserveur {
     }
   }
 
-class Rangement {//franchement bien réfléchir à comment ranger selon le type avec plusieurs tweets
+class Rangement {
 		public Hashtable<String,ArrayList<Status>> tweets;
 
 		public Rangement(){
@@ -228,33 +208,48 @@ class Rangement {//franchement bien réfléchir à comment ranger selon le type 
       return this.tweets.size();
     }
 
-    /*public Collection<Status> elements(){
-      return this.tweets.values();
-    }*/
 
     public Set getCles(){
       return this.tweets.keySet();
     }
 
+    public int maxElem(ArrayList<String> a){
+      int max=0;
+      int indice=-1;
+      for(int i=0;i<a.size();i++){
+        if(max<this.tweets.get(a.get(i)).size()){
+          max=this.tweets.get(a.get(i)).size();
+          indice=i;
+        }
+      }
+      return indice;
+    }
+
     public String toString(){
-      String s="";
+      ArrayList<String> tri=new ArrayList<>();
 
       Set ec=this.tweets.keySet();
       ArrayList<String> c=new ArrayList(ec);
 
-      s+="Cette HashTable contient "+c.size()+" éléments.";
+      while(c.size()!=0){
+        int indice=maxElem(c);
+        String s=c.get(indice);
+        c.remove(indice);
+        tri.add(s);
+      }
+
+      String s="";
+
+      s+="Cette HashTable contient "+tri.size()+" éléments.";
       s+="\n";
 
-      for(int i=0;i<c.size();i++){
-        ArrayList<Status> a=this.tweets.get(c.get(i));
-        s+=c.get(i)+" contient "+a.size()+" éléments.";
+      for(int i=0;i<tri.size();i++){
+        ArrayList<Status> a=this.tweets.get(tri.get(i));
+        s+=tri.get(i)+" contient "+a.size()+" éléments.";
         s+="\n";
       }
 
       return s;
     }
-
-
-
 
 }
