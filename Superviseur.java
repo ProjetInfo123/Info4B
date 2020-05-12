@@ -3,10 +3,10 @@ import java.io.*;
 import java.net.*;
 import twitter4j.*;
 
-public class testserveur {
+public class Superviseur {
     private static int port = 8080;
-    private static int maxClients = 2;
-    private static int numClient = 0;
+    private static int maxNoeuds = 2;
+    private static int numNoeud = 0;
     private static Rangement user =new Rangement();
     private static Rangement date =new Rangement();
     private static Rangement text =new Rangement();
@@ -17,14 +17,14 @@ public class testserveur {
     public static void main(String[] args) throws Exception {
       ServerSocket s = new ServerSocket(port);
       System.out.println("Le serveur attend une connexion " + s);
-      while (numClient < maxClients){
+      while (numNoeud < maxNoeuds){
         Socket soc = s.accept();
-        ConnexionClient cc = new ConnexionClient(soc,user,date,text,hashtag,mention,url);
+        ConnexionNoeud cn = new ConnexionNoeud(soc,user,date,text,hashtag,mention,url);
         System.out.println("Nouvelle connexion =" + soc);
-        numClient++;
-        cc.start();
-        if(numClient==maxClients){
-          while(!cc.isArret()){}
+        numNoeud++;
+        cn.start();
+        if(numNoeud==maxNoeuds){
+          while(!cn.isArret()){}
         }
       }
       System.out.println(user.toString());
@@ -36,7 +36,7 @@ public class testserveur {
   }
 }
 
-  class ConnexionClient extends Thread {
+  class ConnexionNoeud extends Thread {
     private String terme;
     private Socket s;
     private BufferedReader sisr;
@@ -44,7 +44,7 @@ public class testserveur {
     private Rangement u,d,t,h,m,l;
     private boolean arret=false;
 
-    public ConnexionClient(Socket s, Rangement u,Rangement d,Rangement t,Rangement h,Rangement m,Rangement l) {
+    public ConnexionNoeud(Socket s, Rangement u,Rangement d,Rangement t,Rangement h,Rangement m,Rangement l) {
       this.s=s;
       this.u=u;
       this.d=d;

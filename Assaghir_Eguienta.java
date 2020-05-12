@@ -24,10 +24,10 @@ public class Assaghir_Eguienta {
 
     PrintWriter sisw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
 
-    algorigolo a = new algorigolo();
-    DescrTweets d = new DescrTweets(terme);
+    Recup a = new Recup();
+    Description d = new Description(terme);
     Semaphore sem=new Semaphore(1,true);
-    LinkedList<Status> st=a.testTweet2(terme,nbr);
+    LinkedList<Status> st=a.recupTweet(terme,nbr);
     a.ecrire(st,terme+".ser");
     Indexation indun =new Indexation(st,d,sem);
     Indexation indeux=new Indexation(st,d,sem);
@@ -49,7 +49,7 @@ public class Assaghir_Eguienta {
 }
 
 
- class algorigolo{
+ class Recup{
 
     public void ecrire(LinkedList<Status> st,String file){
         FileOutputStream fo = null;
@@ -64,7 +64,7 @@ public class Assaghir_Eguienta {
            }
         }
 
-  LinkedList<Status> testTweet2(String term,int nbr){
+  LinkedList<Status> recupTweet(String term,int nbr){
     Twitter twitter = new TwitterFactory().getInstance();
     Query query = new Query(term);
     int numberOfTweets =nbr;
@@ -101,7 +101,7 @@ public class Assaghir_Eguienta {
     }
 
 
-  int testTweet3(String term,String debut,String fin){
+  int RTDate(String term,String debut,String fin){
 
     Twitter twitter = new TwitterFactory().getInstance();
     Query query = new Query(term);
@@ -156,7 +156,6 @@ public class Assaghir_Eguienta {
 
 
   public void classerCH(ArrayList<Status> tweets){
-        Hashtable<String,ArrayList<Status>> htt =new Hashtable<String,ArrayList<Status>>(); //htt ??
         ArrayList<String> fin = new ArrayList<String>();
         int comptefin[];
         ArrayList<String> hash=new ArrayList<String>();
@@ -230,8 +229,8 @@ public class Assaghir_Eguienta {
 
    public void evolution(String hashtag){
        int evol[]=new int[2];
-       evol[0]=this.testTweet3(hashtag,"2020-04-24","2020-04-25");
-       evol[1]=this.testTweet3(hashtag,"2020-04-25","2020-04-26");
+       evol[0]=this.RTDate(hashtag,"2020-04-24","2020-04-25");
+       evol[1]=this.RTDate(hashtag,"2020-04-25","2020-04-26");
        if(evol[0]<evol[1]){
           System.out.println("augmentation");
         }
@@ -247,11 +246,11 @@ public class Assaghir_Eguienta {
 
 }
 
-class DescrTweets {
+class Description {
 	private Stockage utilisateurs,date,message,hashtags,mentions,url;
 	private String terme="";
 
-	public DescrTweets(String t){
+	public Description(String t){
 		this.terme=t;
 		this.utilisateurs=new Stockage();
 		this.date=new Stockage();
@@ -389,12 +388,12 @@ class DescrTweets {
 
 	}
 
- class Indexation extends Thread {/
+   class Indexation extends Thread {
 		private LinkedList<Status> fa;
-		private DescrTweets d;
+		private Description d;
     private Semaphore s;
 
-		public Indexation(LinkedList<Status> fa,DescrTweets d,Semaphore s){
+		public Indexation(LinkedList<Status> fa,Description d,Semaphore s){
 			this.fa=fa;
 			this.d=d;
       this.s=s;
