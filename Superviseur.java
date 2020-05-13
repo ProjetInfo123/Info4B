@@ -15,6 +15,9 @@ public class Superviseur {
     private static Rangement url =new Rangement();
 
     public static void main(String[] args) throws Exception {
+      if (args.length != 0) {
+        port = Integer.parseInt(args[0]);
+      }
       ServerSocket s = new ServerSocket(port);
       System.out.println("Le serveur attend une connexion " + s);
       while (numNoeud < maxNoeuds){
@@ -54,8 +57,6 @@ public class Superviseur {
       this.l=l;
       try {
         sisr = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        sisw = new PrintWriter( new BufferedWriter(
-                new OutputStreamWriter(s.getOutputStream())),true);
       } catch(IOException e) {
         e.printStackTrace();
       }
@@ -140,7 +141,6 @@ public class Superviseur {
       try{
         this.arret=true;
         sisr.close();
-        sisw.close();
         s.close();
       }catch(IOException e) {
         e.printStackTrace();

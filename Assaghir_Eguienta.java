@@ -10,6 +10,10 @@ public class Assaghir_Eguienta {
   static int port = 8080;
 
   public static void main(String args[]) throws Exception{
+    if (args.length != 0) {
+      ip=args[0];
+      port = Integer.parseInt(args[1]);
+    }
     Scanner s=new Scanner(System.in);
     System.out.println("Quel est le terme à rechercher ?");
     String terme=s.next();
@@ -19,8 +23,6 @@ public class Assaghir_Eguienta {
 
     System.out.println("Nouvelle connexion  = " + socket);
 
-
-    BufferedReader sisr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
     PrintWriter sisw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
 
@@ -40,8 +42,40 @@ public class Assaghir_Eguienta {
     while(st.size()!=0){}
     d.serial();
 
+
+    System.out.println("Voulez vous analyser les tweets obtenues? Taper 1 si oui et un autre numéro sinon ");
+    int analyser=s.nextInt();
+    s.nextLine();
+    if(analyser==1){
+      System.out.println("Taper 1 si vous voulez voir les hashtags les plus populaires");
+      System.out.println("Taper 2 si vous voulez voir les utilisateurs les plus populaires");
+      System.out.println("Taper 3 si vous voulez voir les tweets les plus retweetés");
+      System.out.println("Taper 4 si vous voulez voir les utilisateurs les plus mentionnés");
+      System.out.println("Taper 5 si vous voulez voir les couples d'hashtags les plus populaires");
+      System.out.println("Taper 6 si vous voulez voir l'évolution du nombre de tweets selon un hashtag entre deux périodes");
+      int choix=s.nextInt();
+      s.nextLine();
+      switch (s) {
+        case 1 : { }
+        case 2: {}
+        case 3 :{}
+        case 4:{}
+        case 5: {a.classerCH(st); break}
+        case 6: {System.out.println("Donner la première date de la première période : (de forme YYYY-MM-DD)");
+                String d1=s.next();
+                System.out.println("Donner la deuxième date de la première période  : (de forme YYYY-MM-DD)");
+                String d2=s.next();
+                System.out.println("Donner la première date de la deuxième période : (de forme YYYY-MM-DD)");
+                String f11=s.next();
+                System.out.println("Donner la deuxième date de la deuxième période  : (de forme YYYY-MM-DD)");
+                String f2=s.next();
+                a.evolution(terme,d1,d2,f1,f2); break
+      }
+      }
+    }
+
+
     sisw.println(terme);
-    sisr.close();
     sisw.close();
     socket.close();
 
@@ -227,10 +261,10 @@ public class Assaghir_Eguienta {
 
     }
 
-   public void evolution(String hashtag){
+   public void evolution(String hashtag,String d1,String d2,String f1,String f2){
        int evol[]=new int[2];
-       evol[0]=this.RTDate(hashtag,"2020-04-24","2020-04-25");
-       evol[1]=this.RTDate(hashtag,"2020-04-25","2020-04-26");
+       evol[0]=this.RTDate(hashtag,d1,d2);
+       evol[1]=this.RTDate(hashtag,f1,f2);
        if(evol[0]<evol[1]){
           System.out.println("augmentation");
         }

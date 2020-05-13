@@ -1,7 +1,7 @@
 /*pour compiler :
     javac -cp twitter4j-core-4.0.7.jar *.java
     java -cp twitter4j-core-4.0.7.jar Assaghir_Eguienta.java
-    java -cp twitter4j-core-4.0.7.jar testserveur.java
+    java -cp twitter4j-core-4.0.7.jar Superviseur.java
 */
 
 
