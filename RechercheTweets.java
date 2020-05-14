@@ -5,7 +5,7 @@ import twitter4j.*;
 import java.util.concurrent.Semaphore;
 
 
-public class Assaghir_Eguienta {
+public class RechercheTweets {
   static String ip="127.0.0.1";
   static int port = 8080;
 
@@ -17,8 +17,6 @@ public class Assaghir_Eguienta {
     Scanner s=new Scanner(System.in);
     System.out.println("Quel est le terme à rechercher ?");
     String terme=s.next();
-    System.out.println("Combien de tweets voulez-vous rechercher ?");
-    int nbr=s.nextInt();
     Socket socket = new Socket(ip,port);
 
     System.out.println("Nouvelle connexion  = " + socket);
@@ -29,8 +27,9 @@ public class Assaghir_Eguienta {
     Recup a = new Recup();
     Description d = new Description(terme);
     Semaphore sem=new Semaphore(1,true);
-    LinkedList<Status> st=a.recupTweet(terme,nbr);
-    a.ecrire(st,terme+".ser");
+    a.recupTweet(terme);
+    LinkedList<Status> st=a.getListe();
+    a.ecrire(terme+".ser");
     Indexation indun =new Indexation(st,d,sem);
     Indexation indeux=new Indexation(st,d,sem);
     Indexation indrois=new Indexation(st,d,sem);
@@ -39,99 +38,76 @@ public class Assaghir_Eguienta {
     indeux.start();
     indrois.start();
     indatre.start();
-    while(st.size()!=0){}
+    while(st.size()!=0){System.out.println("Analyse en cours...");}
     d.serial();
-
-
-    System.out.println("Voulez vous analyser les tweets obtenues? Taper 1 si oui et un autre numéro sinon ");
-    int analyser=s.nextInt();
-    s.nextLine();
-    if(analyser==1){
-      System.out.println("Taper 1 si vous voulez voir les hashtags les plus populaires");
-      System.out.println("Taper 2 si vous voulez voir les utilisateurs les plus populaires");
-      System.out.println("Taper 3 si vous voulez voir les tweets les plus retweetés");
-      System.out.println("Taper 4 si vous voulez voir les utilisateurs les plus mentionnés");
-      System.out.println("Taper 5 si vous voulez voir les couples d'hashtags les plus populaires");
-      System.out.println("Taper 6 si vous voulez voir l'évolution du nombre de tweets selon un hashtag entre deux périodes");
-      int choix=s.nextInt();
-      s.nextLine();
-      switch (s) {
-        case 1 : { }
-        case 2: {}
-        case 3 :{}
-        case 4:{}
-        case 5: {a.classerCH(st); break}
-        case 6: {System.out.println("Donner la première date de la première période : (de forme YYYY-MM-DD)");
-                String d1=s.next();
-                System.out.println("Donner la deuxième date de la première période  : (de forme YYYY-MM-DD)");
-                String d2=s.next();
-                System.out.println("Donner la première date de la deuxième période : (de forme YYYY-MM-DD)");
-                String f11=s.next();
-                System.out.println("Donner la deuxième date de la deuxième période  : (de forme YYYY-MM-DD)");
-                String f2=s.next();
-                a.evolution(terme,d1,d2,f1,f2); break
-      }
-      }
-    }
-
 
     sisw.println(terme);
     sisw.close();
     socket.close();
-
   }
 }
 
 
  class Recup{
+   private LinkedList<Status> st;
 
-    public void ecrire(LinkedList<Status> st,String file){
+   public Recup(){
+     this.st=new LinkedList<>();
+   }
+
+   public Recup(String file){
+     try {
+       FileInputStream fileIn = new FileInputStream(file);
+       ObjectInputStream in = new ObjectInputStream(fileIn);
+       this.st = (LinkedList<Status>)in.readObject();
+     }
+     catch (Exception e) {
+       System.out.println(e);
+     }
+   }
+
+   public LinkedList<Status> getListe(){
+     return this.st;
+   }
+
+   public void ajout(Status s){
+     this.st.add(s);
+   }
+
+    public void ecrire(String file){
         FileOutputStream fo = null;
           try{
             fo = new FileOutputStream(file);
             ObjectOutputStream out = new ObjectOutputStream(fo);
-            out.writeObject(st);
+            out.writeObject(this.st);
           }
           catch(Exception e)
           {
             System.out.println(e);
            }
+    }
+
+    public void recupTweet(String term){
+      Twitter twitter = new TwitterFactory().getInstance();
+      Query query = new Query(term);
+      int numberOfTweets =5000;
+      long lastID = Long.MAX_VALUE;
+      while (this.st.size () < numberOfTweets) {
+        if (numberOfTweets - this.st.size() > 100)
+          query.setCount(100);
+        else
+          query.setCount(numberOfTweets - this.st.size());
+        try {
+          QueryResult result = twitter.search(query);
+          this.st.addAll(result.getTweets());
+          for (Status t: this.st)
+            if(t.getId() < lastID) lastID = t.getId();
         }
-
-  LinkedList<Status> recupTweet(String term,int nbr){
-    Twitter twitter = new TwitterFactory().getInstance();
-    Query query = new Query(term);
-    int numberOfTweets =nbr;
-    long lastID = Long.MAX_VALUE;
-    LinkedList<Status> tweets = new LinkedList<Status>();
-    while (tweets.size () < numberOfTweets) {
-      if (numberOfTweets - tweets.size() > 100)
-        query.setCount(100);
-      else
-        query.setCount(numberOfTweets - tweets.size());
-      try {
-        QueryResult result = twitter.search(query);
-        tweets.addAll(result.getTweets());
-        System.out.println("Gathered " + tweets.size() + " tweets");
-        for (Status t: tweets)
-          if(t.getId() < lastID) lastID = t.getId();
-
+        catch (TwitterException te) {
+          System.out.println("Couldn't connect: " + te);
+        };
+        query.setMaxId(lastID-1);
       }
-
-      catch (TwitterException te) {
-        System.out.println("Couldn't connect: " + te);
-      };
-      query.setMaxId(lastID-1);
-    }
-
-    for (int i = 0; i < tweets.size(); i++) {
-      Status t = (Status) tweets.get(i);
-      String user = t.getUser().getScreenName();
-      String msg = t.getText();
-      String time = "";
-        System.out.println(i + " USER: " + user + " wrote: " + msg);
-    }
-    return tweets;
     }
 
 
@@ -146,33 +122,35 @@ public class Assaghir_Eguienta {
     ArrayList<Status> tweets = new ArrayList<Status>();
     while (tweets.size () < numberOfTweets) {
     if (numberOfTweets - tweets.size() > 100)
-      query.setCount(100);
+    query.setCount(100);
     else
-      query.setCount(numberOfTweets - tweets.size());
+    query.setCount(numberOfTweets - tweets.size());
     try {
-      QueryResult result = twitter.search(query);
-      tweets.addAll(result.getTweets());
-      System.out.println("Gathered " + tweets.size() + " tweets");
-      for (Status t: tweets)
-        if(t.getId() < lastID) lastID = t.getId();
+    QueryResult result = twitter.search(query);
+    tweets.addAll(result.getTweets());
+    for (Status t: tweets)
+      if(t.getId() < lastID) lastID = t.getId();
 
     }
 
     catch (TwitterException te) {
-      System.out.println("Couldn't connect: " + te);
+    System.out.println("Couldn't connect: " + te);
     };
     query.setMaxId(lastID-1);
     }
 
-    for (int i = 0; i < tweets.size(); i++) {
-    Status t = (Status) tweets.get(i);
-    String user = t.getUser().getScreenName();
-    String msg = t.getText();
-    String time = "";
-      System.out.println(i + " USER: " + user + " wrote: " + msg);
+    ArrayList<Status>hash=new ArrayList<Status>();
+    for(Status t: tweets){
+      HashtagEntity ht[]=t.getHashtagEntities();
+      for(int i=0;i<ht.length;i++){
+       if(ht[i].getText().equals(term)){
+         hash.add(t);
+       }
+     }
     }
-    return tweets.size();
-    }
+
+    return hash.size();
+  }
 
 
 
@@ -189,16 +167,13 @@ public class Assaghir_Eguienta {
 
 
 
-  public void classerCH(ArrayList<Status> tweets){
+  public void classerCH(LinkedList<Status> tweets){
         ArrayList<String> fin = new ArrayList<String>();
         int comptefin[];
         ArrayList<String> hash=new ArrayList<String>();
         HashtagEntity ht[];
-
-
         for(int l=0;l<tweets.size();l++){
           ht=tweets.get(l).getHashtagEntities();
-
           int v=0;
           for(int i=0;i<ht.length;i++){
             for(int j=i+1;j<ht.length;j++){
@@ -226,12 +201,10 @@ public class Assaghir_Eguienta {
             }
           }
         }
-
       comptefin=new int[fin.size()];
       for(int k=0;k<comptefin.length;k++){
         comptefin[k]=0;
       }
-
       for(int i=0;i<tweets.size();i++){
         ht=tweets.get(i).getHashtagEntities();
         hash.clear();
@@ -250,15 +223,11 @@ public class Assaghir_Eguienta {
               }
             }
           }
-
       }
-
       for(int i=0;i<fin.size();i++){
         System.out.println("Le couple "+fin.get(i)+" est apparu "+comptefin[i]+" fois.");
       }
-
       System.out.println("Il y a "+fin.size()+" couples.");
-
     }
 
    public void evolution(String hashtag,String d1,String d2,String f1,String f2){
@@ -357,17 +326,26 @@ class Description {
 	  }
 
 		public void ajoutTweet(String s,Status t){
-			if(this.tweets.containsKey(s)){
-				ArrayList<Status> a=this.tweets.get(s);
-				a.add(t);
-				this.tweets.put(s,a);
-			}
-			else{
-				ArrayList<Status> a=new ArrayList<>();
-				a.add(t);
-				this.tweets.put(s,a);
-			}
-		}
+      if(this.tweets.containsKey(s)){
+        ArrayList<Status> a=this.tweets.get(s);
+        boolean dedans=false;
+        for(int i=0;i<a.size();i++){
+          long id=a.get(i).getId();
+          if(t.getId()==id){
+            dedans=true;
+          }
+        }
+        if(!dedans){
+          a.add(t);
+          this.tweets.put(s,a);
+        }
+      }
+      else{
+        ArrayList<Status> a=new ArrayList<>();
+        a.add(t);
+        this.tweets.put(s,a);
+      }
+    }
 
 		public int size(){
 			return this.tweets.size();
@@ -390,28 +368,32 @@ class Description {
       return indice;
     }
 
-    public String toString(){
+    public String toString(int k){
       ArrayList<String> tri=new ArrayList<>();
-
       Set ec=this.tweets.keySet();
       ArrayList<String> c=new ArrayList(ec);
-
       while(c.size()!=0){
         int indice=maxElem(c);
         String s=c.get(indice);
         c.remove(indice);
         tri.add(s);
       }
-
       String s="";
-
       s+="Cette HashTable contient "+tri.size()+" éléments.";
       s+="\n";
-
-      for(int i=0;i<tri.size();i++){
-        ArrayList<Status> a=this.tweets.get(tri.get(i));
-        s+=tri.get(i)+" contient "+a.size()+" éléments.";
-        s+="\n";
+      if(k==-1 || k>tri.size()){
+        for(int i=0;i<tri.size();i++){
+          ArrayList<Status> a=this.tweets.get(tri.get(i));
+          s+="Top "+(i+1)+" : "+tri.get(i)+" contient "+a.size()+" éléments.";
+          s+="\n";
+        }
+      }
+      else{
+        for(int i=0;i<k;i++){
+          ArrayList<Status> a=this.tweets.get(tri.get(i));
+          s+="Top "+(i+1)+" : "+tri.get(i)+" contient "+a.size()+" éléments.";
+          s+="\n";
+        }
       }
 
       return s;

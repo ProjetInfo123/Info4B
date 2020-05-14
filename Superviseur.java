@@ -3,16 +3,19 @@ import java.io.*;
 import java.net.*;
 import twitter4j.*;
 
+
+
 public class Superviseur {
     private static int port = 8080;
-    private static int maxNoeuds = 2;
+    private static int maxNoeuds = 20;
     private static int numNoeud = 0;
-    private static Rangement user =new Rangement();
-    private static Rangement date =new Rangement();
-    private static Rangement text =new Rangement();
-    private static Rangement hashtag =new Rangement();
-    private static Rangement mention =new Rangement();
-    private static Rangement url =new Rangement();
+    private static Stockage user =new Stockage();
+    private static Stockage date =new Stockage();
+    private static Stockage text =new Stockage();
+    private static Stockage hashtag =new Stockage();
+    private static Stockage mention =new Stockage();
+    private static Stockage url =new Stockage();
+    private static Recup tweets=new Recup();
 
     public static void main(String[] args) throws Exception {
       if (args.length != 0) {
@@ -22,20 +25,79 @@ public class Superviseur {
       System.out.println("Le serveur attend une connexion " + s);
       while (numNoeud < maxNoeuds){
         Socket soc = s.accept();
-        ConnexionNoeud cn = new ConnexionNoeud(soc,user,date,text,hashtag,mention,url);
+        ConnexionNoeud cn = new ConnexionNoeud(soc,user,date,text,hashtag,mention,url,tweets);
         System.out.println("Nouvelle connexion =" + soc);
         numNoeud++;
         cn.start();
         if(numNoeud==maxNoeuds){
+          System.out.println("Tri en cours...");
           while(!cn.isArret()){}
         }
       }
-      System.out.println(user.toString());
-      System.out.println(date.toString());
-      System.out.println(text.toString());
-      System.out.println(hashtag.toString());
-      System.out.println(mention.toString());
-      System.out.println(url.toString());
+      Scanner sc=new Scanner(System.in);
+      int choix=1;
+      System.out.println(maxNoeuds*5000+" tweets ont ete recuperes.");
+      while(choix>=1 && choix<=8){
+        System.out.println("Taper 1 si vous voulez voir les hashtags les plus populaires.");
+        System.out.println("Taper 2 si vous voulez voir les utilisateurs les plus actifs.");
+        System.out.println("Taper 3 si vous voulez voir les tweets les plus retweetes.");
+        System.out.println("Taper 4 si vous voulez voir les utilisateurs les plus mentionnes.");
+        System.out.println("Taper 5 si vous voulez voir les les liens les plus utilises.");
+        System.out.println("Taper 6 si vous voulez voir les dates ou il y a eu le plus de tweets.");
+        System.out.println("Taper 7 si vous voulez voir les couples d'hashtags les plus populaires.");
+        System.out.println("Taper 8 si vous voulez voir l'evolution du nombre de tweets selon un hashtag entre deux periodes.");
+        System.out.println("Taper autre chose pour arreter l'analyse.");
+        choix=sc.nextInt();
+        switch (choix) {
+          case 1 : {System.out.println("Combien d'elements souhaitez-vous voir ? Tapez -1 pour tous les voir sinon tapez le nombre souhaite.");
+                    int k=sc.nextInt();
+                    System.out.println(hashtag.toString(k));
+                    break;
+                    }
+          case 2: {System.out.println("Combien d'elements souhaitez-vous voir ? Tapez -1 pour tous les voir sinon tapez le nombre souhaite.");
+                    int k=sc.nextInt();
+                    System.out.println(user.toString(k));
+                    break;
+                    }
+          case 3 :{System.out.println("Combien d'elements souhaitez-vous voir ? Tapez -1 pour tous les voir sinon tapez le nombre souhaite.");
+                    int k=sc.nextInt();
+                    System.out.println(text.toString(k));
+                    break;
+                    }
+          case 4:{System.out.println("Combien d'elements souhaitez-vous voir ? Tapez -1 pour tous les voir sinon tapez le nombre souhaite.");
+                    int k=sc.nextInt();
+                    System.out.println(mention.toString(k));
+                    break;
+                    }
+
+          case 5:{System.out.println("Combien d'elements souhaitez-vous voir ? Tapez -1 pour tous les voir sinon tapez le nombre souhaite.");
+                  int k=sc.nextInt();
+                  System.out.println(url.toString(k));
+                  break;
+                  }
+          case 6:{System.out.println("Combien d'elements souhaitez-vous voir ? Tapez -1 pour tous les voir sinon tapez le nombre souhaite.");
+                  int k=sc.nextInt();
+                  System.out.println(date.toString(k));
+                  break;
+                }
+          case 7: {tweets.classerCH(tweets.getListe());
+                    break;}
+          case 8: {System.out.println("Donnez le hashtag à rechercher");
+                  String terme=sc.next();
+                  System.out.println("Donner la première date de la premiere periode : (de forme YYYY-MM-DD)");
+                  String d1=sc.next();
+                  System.out.println("Donner la deuxième date de la premiere periode  : (de forme YYYY-MM-DD)");
+                  String d2=sc.next();
+                  System.out.println("Donner la première date de la deuxieme periode : (de forme YYYY-MM-DD)");
+                  String f1=sc.next();
+                  System.out.println("Donner la deuxième date de la deuxieme periode  : (de forme YYYY-MM-DD)");
+                  String f2=sc.next();
+                  tweets.evolution(terme,d1,d2,f1,f2);
+                  break;
+                  }
+      }
+    }
+    System.out.println("Fin de la recherche.");
   }
 }
 
@@ -44,10 +106,11 @@ public class Superviseur {
     private Socket s;
     private BufferedReader sisr;
     private PrintWriter sisw;
-    private Rangement u,d,t,h,m,l;
+    private Stockage u,d,t,h,m,l;
+    private Recup tw;
     private boolean arret=false;
 
-    public ConnexionNoeud(Socket s, Rangement u,Rangement d,Rangement t,Rangement h,Rangement m,Rangement l) {
+    public ConnexionNoeud(Socket s, Stockage u,Stockage d,Stockage t,Stockage h,Stockage m,Stockage l,Recup tw) {
       this.s=s;
       this.u=u;
       this.d=d;
@@ -55,6 +118,7 @@ public class Superviseur {
       this.h=h;
       this.m=m;
       this.l=l;
+      this.tw=tw;
       try {
         sisr = new BufferedReader(new InputStreamReader(s.getInputStream()));
       } catch(IOException e) {
@@ -74,12 +138,13 @@ public class Superviseur {
       }
 
 
-      Rangement st1=new Rangement(terme+"_user.ser");
-      Rangement st2=new Rangement(terme+"_date.ser");
-      Rangement st3=new Rangement(terme+"_text.ser");
-      Rangement st4=new Rangement(terme+"_hashtag.ser");
-      Rangement st5=new Rangement(terme+"_mention.ser");
-      Rangement st6=new Rangement(terme+"_url.ser");
+      Stockage st1=new Stockage(terme+"_user.ser");
+      Stockage st2=new Stockage(terme+"_date.ser");
+      Stockage st3=new Stockage(terme+"_text.ser");
+      Stockage st4=new Stockage(terme+"_hashtag.ser");
+      Stockage st5=new Stockage(terme+"_mention.ser");
+      Stockage st6=new Stockage(terme+"_url.ser");
+      Recup r=new Recup(terme+".ser");
 
       Set ec;
       ArrayList<String> c;
@@ -138,6 +203,10 @@ public class Superviseur {
         }
       }
 
+      for(int i=0;i<r.getListe().size();i++){
+        this.tw.ajout(r.getListe().get(i));
+      }
+
       try{
         this.arret=true;
         sisr.close();
@@ -148,14 +217,14 @@ public class Superviseur {
     }
   }
 
-class Rangement {
+class Stockage {
 		public Hashtable<String,ArrayList<Status>> tweets;
 
-		public Rangement(){
+		public Stockage(){
 			this.tweets=new Hashtable<String,ArrayList<Status>>();
 		}
 
-		public Rangement(String file) {
+		public Stockage(String file) {
       try {
         FileInputStream fileIn = new FileInputStream(file);
         ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -225,7 +294,7 @@ class Rangement {
       return indice;
     }
 
-    public String toString(){
+    public String toString(int k){
       ArrayList<String> tri=new ArrayList<>();
 
       Set ec=this.tweets.keySet();
@@ -240,16 +309,236 @@ class Rangement {
 
       String s="";
 
-      s+="Cette HashTable contient "+tri.size()+" éléments.";
+      s+="Cette HashTable contient "+tri.size()+" elements.";
       s+="\n";
 
-      for(int i=0;i<tri.size();i++){
-        ArrayList<Status> a=this.tweets.get(tri.get(i));
-        s+=tri.get(i)+" contient "+a.size()+" éléments.";
-        s+="\n";
+      if(k==-1 || k>tri.size()){
+        for(int i=0;i<tri.size();i++){
+          ArrayList<Status> a=this.tweets.get(tri.get(i));
+          s+="Top "+(i+1)+" : "+tri.get(i)+" contient "+a.size()+" elements.";
+          s+="\n";
+        }
+      }
+      else{
+        for(int i=0;i<k;i++){
+          ArrayList<Status> a=this.tweets.get(tri.get(i));
+          s+="Top "+(i+1)+" : "+tri.get(i)+" contient "+a.size()+" elements.";
+          s+="\n";
+        }
       }
 
       return s;
     }
+
+}
+
+
+class Recup{
+  private LinkedList<Status> st;
+
+  public Recup(){
+    this.st=new LinkedList<>();
+  }
+
+  public Recup(String file){
+    try {
+      FileInputStream fileIn = new FileInputStream(file);
+      ObjectInputStream in = new ObjectInputStream(fileIn);
+      this.st = (LinkedList<Status>)in.readObject();
+    }
+    catch (Exception e) {
+      System.out.println(e);
+    }
+  }
+
+  public LinkedList<Status> getListe(){
+    return this.st;
+  }
+
+  public void ajout(Status s){
+    this.st.add(s);
+  }
+
+  public void ecrire(String file){
+      FileOutputStream fo = null;
+        try{
+          fo = new FileOutputStream(file);
+          ObjectOutputStream out = new ObjectOutputStream(fo);
+          out.writeObject(this.st);
+        }
+        catch(Exception e)
+        {
+          System.out.println(e);
+         }
+  }
+
+       public void recupTweet(String term){
+         Twitter twitter = new TwitterFactory().getInstance();
+         Query query = new Query(term);
+         int numberOfTweets =5000;
+         long lastID = Long.MAX_VALUE;
+         while (this.st.size () < numberOfTweets) {
+           if (numberOfTweets - this.st.size() > 100)
+             query.setCount(100);
+           else
+             query.setCount(numberOfTweets - this.st.size());
+           try {
+             QueryResult result = twitter.search(query);
+             this.st.addAll(result.getTweets());
+             for (Status t: this.st)
+               if(t.getId() < lastID) lastID = t.getId();
+           }
+           catch (TwitterException te) {
+             System.out.println("Couldn't connect: " + te);
+           };
+           query.setMaxId(lastID-1);
+         }
+       }
+
+
+ int RTDate(String term,String debut,String fin){
+
+   Twitter twitter = new TwitterFactory().getInstance();
+   Query query = new Query(term);
+   query.setSince(debut);
+   query.setUntil(fin);
+   int numberOfTweets = 30;
+   long lastID = Long.MAX_VALUE;
+   ArrayList<Status> tweets = new ArrayList<Status>();
+   while (tweets.size () < numberOfTweets) {
+   if (numberOfTweets - tweets.size() > 100)
+     query.setCount(100);
+   else
+     query.setCount(numberOfTweets - tweets.size());
+   try {
+     QueryResult result = twitter.search(query);
+     tweets.addAll(result.getTweets());
+     for (Status t: tweets)
+       if(t.getId() < lastID) lastID = t.getId();
+
+   }
+
+   catch (TwitterException te) {
+     System.out.println("Couldn't connect: " + te);
+   };
+   query.setMaxId(lastID-1);
+   }
+
+   ArrayList<Status>hash=new ArrayList<Status>();
+   for(Status t: tweets){
+     HashtagEntity ht[]=t.getHashtagEntities();
+     for(int i=0;i<ht.length;i++){
+ 			if(ht[i].getText().equals(term)){
+        hash.add(t);
+      }
+ 		}
+   }
+
+   return hash.size();
+  }
+
+
+
+
+ int retournechar(String s, char a){
+   for(int i=0;i<s.length();i++){
+     if(s.charAt(i)==a){
+       return i;
+     }
+   }
+   return -1;
+ }
+
+
+
+
+ public void classerCH(LinkedList<Status> tweets){
+       ArrayList<String> fin = new ArrayList<String>();
+       int comptefin[];
+       ArrayList<String> hash=new ArrayList<String>();
+       HashtagEntity ht[];
+
+
+       for(int l=0;l<tweets.size();l++){
+         ht=tweets.get(l).getHashtagEntities();
+
+         int v=0;
+         for(int i=0;i<ht.length;i++){
+           for(int j=i+1;j<ht.length;j++){
+             String h1="#"+ht[i].getText();
+             String h2="#"+ht[j].getText();
+             v=0;
+             if(!(h1.equalsIgnoreCase(h2))){
+               for(int k=0;k<fin.size();k++){
+                 String h3="";
+                 String h4="";
+                 for(int m=0;m<retournechar(fin.get(k),'/');m++){
+                   h3+=fin.get(k).charAt(m);
+                 }
+                 for(int n=retournechar(fin.get(k),'/')+1;n<fin.get(k).length();n++){
+                   h4+=fin.get(k).charAt(n);
+                 }
+                 if((h3.equalsIgnoreCase(h1) && h4.equalsIgnoreCase(h2)) || (h3.equalsIgnoreCase(h2) && h4.equalsIgnoreCase(h1))){
+                   v=1;
+                 }
+               }
+               if(v==0){
+                 fin.add(h1+"/"+h2);
+               }
+             }
+           }
+         }
+       }
+
+     comptefin=new int[fin.size()];
+     for(int k=0;k<comptefin.length;k++){
+       comptefin[k]=0;
+     }
+
+     for(int i=0;i<tweets.size();i++){
+       ht=tweets.get(i).getHashtagEntities();
+       hash.clear();
+       for(int j=0;j<ht.length;j++){
+         for(int k=j+1;k<ht.length;k++){
+             hash.add("#"+ht[j].getText()+"/#"+ht[k].getText());
+             hash.add("#"+ht[k].getText()+"/#"+ht[j].getText());
+         }
+       }
+
+         for(int l=0;l<hash.size();l++){
+           for(int m=0;m<fin.size();m++){
+             if(hash.get(l).equalsIgnoreCase(fin.get(m))){
+               int c=comptefin[m];
+               comptefin[m]=c+1;
+             }
+           }
+         }
+
+     }
+
+     for(int i=0;i<fin.size();i++){
+       System.out.println("Le couple "+fin.get(i)+" est apparu "+comptefin[i]+" fois.");
+     }
+
+     System.out.println("Il y a "+fin.size()+" couples.");
+
+   }
+
+  public void evolution(String hashtag,String d1,String d2,String f1,String f2){
+      int evol[]=new int[2];
+      evol[0]=this.RTDate(hashtag,d1,d2);
+      evol[1]=this.RTDate(hashtag,f1,f2);
+      if(evol[0]<evol[1]){
+         System.out.println("augmentation");
+       }
+       else{
+         if(evol[0]>evol[1]){
+           System.out.println("diminution");
+         }
+         else{
+           System.out.println("pas de changement");
+         }
+       }
+  }
 
 }
